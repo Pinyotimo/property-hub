@@ -93,4 +93,16 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]   # dev static files
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')     # for collectstatic in production
 
 # Media files (user uploads)
-MEDIA
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Crispy Forms Configuration
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
+# Custom User Model
+AUTH_USER_MODEL = 'accounts.User'
+
+# Authentication URLs
+LOGIN_REDIRECT_URL = 'profile'
+LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = 'login'
