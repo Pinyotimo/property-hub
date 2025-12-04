@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="container-fluid bg-light py-5">   <!-- 👈 background color -->
+  <div class="row">
+    <!-- Profile Info -->
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-sm bg-white">
+        <div class="card-body text-center">
+          <img src="https://via.placeholder.com/120" class="rounded-circle mb-3" alt="Profile Picture">
+          <h4 class="card-title">{{ profile.user.username }}</h4>
+          <p class="card-text text-muted">{{ profile.user.email }}</p>
+          <span class="badge bg-info text-dark">Joined {{ profile.user.date_joined|date:"F j, Y" }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Property Listings -->
+    <div class="col-md-8">
+      <h3 class="mb-3 ">My Properties</h3>
+      {% if my_properties %}
+        <div class="row">
+          {% for property in my_properties %}
+            <div class="col-md-6 mb-4">
+              <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                  <h5 class="card-title">{{ property.title }}</h5>
+                  <p class="card-text">
+                    <i class="bi bi-geo-alt-fill"></i> {{ property.location }}<br>
+                    <strong>${{ property.price }}</strong>
+                  </p>
+                  <a href="{% url 'property_detail' property.pk %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-warning">You haven’t listed any properties yet.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
