@@ -104,5 +104,5 @@ AUTH_USER_MODEL = 'accounts.User'
 
 # Authentication URLs
 LOGIN_REDIRECT_URL = 'profile'
-LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = 'logout_confirmation'
