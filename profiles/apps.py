@@ -5,4 +5,4 @@ class ProfilesConfig(AppConfig):
     name = 'profiles'
 
     def ready(self):
-        import profiles.signals  # ✅ this line ensures the signal is loaded
+        import profiles.signals

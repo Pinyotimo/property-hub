@@ -1,24 +1,20 @@
 {% extends "base.html" %}
-{% block title %}{{ property.title }}{% endblock %}
-
 {% block content %}
-<div class="card mb-4">
-  <div class="card-body">
-    <h2 class="card-title">{{ property.title }}</h2>
-    <p class="card-text"><strong>Location:</strong> {{ property.location }}</p>
-    <p class="card-text"><strong>Price:</strong> ${{ property.price }}</p>
-    <p class="card-text"><strong>Bedrooms:</strong> {{ property.bedrooms }}</p>
-    <p class="card-text"><strong>Bathrooms:</strong> {{ property.bathrooms }}</p>
-    <p class="card-text"><strong>Type:</strong> {{ property.get_property_type_display }}</p>
-    <p class="card-text"><strong>Listed on:</strong> {{ property.listed_date|date:"F j, Y" }}</p>
-    <hr>
-    <p class="card-text">{{ property.description }}</p>
+<div class="container mt-4">
+  <div class="card">
+    {% if property.image %}
+      <img src="{{ property.image.url }}" class="card-img-top" alt="{{ property.title }}">
+    {% endif %}
+    <div class="card-body">
+      <h3>{{ property.title }}</h3>
+      <p><strong>Location:</strong> {{ property.location }}</p>
+      <p><strong>Price:</strong> ${{ property.price|floatformat:2 }}</p>
+      <p><strong>Bedrooms:</strong> {{ property.bedrooms }}</p>
+      <p><strong>Bathrooms:</strong> {{ property.bathrooms }}</p>
+      <p><strong>Type:</strong> {{ property.property_type }}</p>
+      <p><strong>Listed:</strong> {{ property.listed_date }}</p>
+      <p><strong>Owner:</strong> {{ property.owner.username }}</p>
+    </div>
   </div>
-</div>
-
-<div class="d-flex gap-2">
-  <a href="{% url 'property_edit' property.pk %}" class="btn btn-warning">Edit</a>
-  <a href="{% url 'property_delete' property.pk %}" class="btn btn-danger">Delete</a>
-  <a href="{% url 'property_list' %}" class="btn btn-secondary">Back to Listings</a>
 </div>
 {% endblock %}

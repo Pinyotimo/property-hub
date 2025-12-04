@@ -13,7 +13,6 @@ class PropertyAdmin(admin.ModelAdmin):
     list_filter = ('property_type', 'bedrooms', 'bathrooms')
     ordering = ('-listed_date', 'price')
     readonly_fields = ('listed_date', 'image_preview')
-    prepopulated_fields = {'slug': ('title',)}
 
     def formatted_price(self, obj):
         return f"${obj.price:,.2f}"
