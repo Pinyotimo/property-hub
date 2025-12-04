@@ -3,7 +3,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm
 
-@login_required
 def profile(request):
     return render(request, "accounts/profile.html")
 
