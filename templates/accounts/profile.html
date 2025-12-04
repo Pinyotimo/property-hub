@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+  .page-bg {
+    min-height: 100vh;
+    background: url("{% static 'images/pexels-mahmoud-zakariya-2154822140-34975232 (2).jpg' %}") center center no-repeat;
+    background-size: cover;          /* fills viewport proportionally */
+    background-attachment: fixed;    /* keeps image stable on scroll */
+  }
+
+  /* Prevent over-scaling on very large screens */
+  @media (min-width: 1600px) {
+    .page-bg {
+      background-size: contain;
+      background-position: top center;
+    }
+  }
+
+  .overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(255, 255, 255, 0.7); /* stronger overlay for readability */
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .card {
+    border-radius: 2px;
+  }
+
+  .card-header {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .card-body {
+    padding: 2rem;
+  }
+
+  .rounded-circle {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+
+  .list-group-item {
+    background-color: transparent;
+    border: none;
+    font-size: 0.95rem;
+  }
+
+  .btn-custom {
+    min-width: 140px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .btn-custom:hover {
+    transform: translateY(-2px);
+  }
+</style>
+
+<div class="page-bg">
+  <div class="overlay"></div>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8 col-sm-10">
+        <div class="card shadow-lg border-0 rounded">
+          <div class="card-header bg-primary text-white text-center">
+            <h2 class="mb-0">User Profile</h2>
+          </div>
+          <div class="card-body">
+
+            {% if messages %}
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+              {% endfor %}
+            {% endif %}
+
+            {% if request.user.is_authenticated %}
+              <!-- Authenticated user section -->
+              <div class="d-flex align-items-center mb-4 border-bottom pb-3">
+                <img src="{% if request.user.profile_picture %}{{ request.user.profile_picture.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}"
+                     class="rounded-circle me-3 border border-3 border-primary"
+                     alt="User Avatar" width="100" height="100">
+                <div>
+                  <h4 class="card-title mb-1">{{ request.user.username }}</h4>
+                  <p class="text-muted mb-0">{{ request.user.email }}</p>
+                </div>
+              </div>
+
+              <ul class="list-group list-group-flush mb-3">
+                <li class="list-group-item">
+                  <strong>Member since:</strong> {{ request.user.date_joined|date:"F j, Y" }}
+                </li>
+                <li class="list-group-item">
+                  <strong>Last login:</strong> {{ request.user.last_login|date:"F j, Y, g:i a" }}
+                </li>
+              </ul>
+
+              <div class="mt-4 text-center">
+                <a href="{% url 'profile_edit' %}" class="btn btn-outline-primary btn-custom me-2">Edit Profile</a>
+                <a href="{% url 'password_change' %}" class="btn btn-warning btn-custom me-2">Change Password</a>
+                <form method="post" action="{% url 'logout' %}" class="d-inline">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger btn-custom">Logout</button>
+                </form>
+              </div>
+
+            {% else %}
+              <!-- Guest / login section -->
+              <p class="text-center">You are not logged in.</p>
+              <div class="text-center mt-3">
+                <a href="{% url 'login' %}" class="btn btn-primary btn-custom me-2">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-outline-secondary btn-custom">Sign Up</a>
+              </div>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

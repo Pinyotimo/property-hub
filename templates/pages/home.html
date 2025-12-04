@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Property Hub{% endblock %}
+
+{% block content %}
+<div class="jumbotron bg-light p-5 rounded mb-4">
+    <h1 class="display-4">Welcome to Property Hub</h1>
+    <p class="lead">Your one-stop destination for property listings and management.</p>
+    <hr class="my-4">
+    {% if user.is_authenticated %}
+        <p>Welcome back, {{ user.username }}!</p>
+        <a class="btn btn-primary btn-lg" href="{% url 'profile' %}" role="button">View Profile</a>
+    {% else %}
+        <p>Get started by creating an account or logging in.</p>
+        <a class="btn btn-primary btn-lg" href="{% url 'register' %}" role="button">Register</a>
+        <a class="btn btn-outline-primary btn-lg" href="{% url 'login' %}" role="button">Login</a>
+    {% endif %}
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Properties</h5>
+                <p class="card-text">Browse and manage property listings.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Payments</h5>
+                <p class="card-text">Handle property-related payments securely.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Account Management</h5>
+                <p class="card-text">Manage your profile and settings.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
