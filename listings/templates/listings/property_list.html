@@ -33,6 +33,9 @@
                     <div class="d-flex gap-2">
                         <a href="{% url 'property_detail' property.pk %}" class="btn btn-primary btn-view-details">View Details</a>
                         {% if request.user.is_authenticated %}
+                            {% if request.user == property.owner %}
+                                <a href="{% url 'property_update' property.pk %}" class="btn btn-outline-primary">Edit</a>
+                            {% endif %}
                             {% if request.user == property.owner or request.user.is_superuser or request.user.is_staff %}
                                 <a href="{% url 'property_choose_image' property.pk %}" class="btn btn-outline-info">Choose Image</a>
                                 <a href="{% url 'property_delete' property.pk %}" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete this property? This action cannot be undone.');">Delete</a>
