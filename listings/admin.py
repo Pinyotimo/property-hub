@@ -7,7 +7,7 @@ class PropertyAdmin(admin.ModelAdmin):
         'title', 'location', 'formatted_price',
         'bedrooms', 'bathrooms',
         'property_type', 'listed_date',
-        'owner', 'image_preview'
+        'owner', 'image_preview', 'choose_image_link'
     )
     search_fields = ('title', 'location', 'owner__username')
     list_filter = ('property_type', 'bedrooms', 'bathrooms')
@@ -22,5 +22,14 @@ class PropertyAdmin(admin.ModelAdmin):
         if obj.image:
             return f'<img src="{obj.image.url}" style="max-height:100px; max-width:150px;" />'
         return "No Image"
-    image_preview.allow_tags = True
+    image_preview.short_description = "Preview"
+
+    def choose_image_link(self, obj):
+        """Show a link in the admin change list to open the frontend chooser."""
+        from django.utils.html import format_html
+        if obj.pk:
+            url = f"/listings/property/{obj.pk}/choose-image/"
+            return format_html('<a class="button" href="{}" target="_blank">Choose Image</a>', url)
+        return '-'
+    choose_image_link.short_description = 'Choose Image'
     image_preview.short_description = "Preview"
