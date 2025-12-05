@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'properties',
     'payments',
     'pages',
+    'billing',
+    'django_daraja',
 ]
 
 MIDDLEWARE = [
@@ -106,3 +108,21 @@ AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL = 'profile'
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'logout_confirmation'
+
+MPESA_ENVIRONMENT = 'sandbox'  # or 'production'
+MPESA_CONSUMER_KEY = 'your_consumer_key'
+MPESA_CONSUMER_SECRET = 'your_consumer_secret'
+MPESA_SHORTCODE = 'your_shortcode'
+MPESA_PASSKEY = 'your_passkey'
+MPESA_CALLBACK_URL = 'https://yourdomain.com/mpesa/callback/'
+
+# M-Pesa Configuration
+MPESA_CONFIG = {
+    'CONSUMER_KEY': 'your_consumer_key_here',  # Replace with actual key
+    'CONSUMER_SECRET': 'your_consumer_secret_here',  # Replace with actual secret
+    'SHORTCODE': 'your_shortcode_here',  # Replace with actual shortcode
+    'PASSKEY': 'your_passkey_here',  # Replace with actual passkey
+    'BASE_URL': 'https://sandbox.safaricom.co.ke' if DEBUG else 'https://api.safaricom.co.ke',  # Sandbox for development
+    'CALLBACK_URL': 'https://yourdomain.com/payments/mpesa/callback/',  # Replace with your actual callback URL
+}
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

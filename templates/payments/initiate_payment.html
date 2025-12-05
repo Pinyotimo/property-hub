@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Initiate Payment{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Pay for Property Feature</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Property Details</h5>
+                            <p><strong>Title:</strong> {{ property.title }}</p>
+                            <p><strong>Location:</strong> {{ property.location }}</p>
+                            <p><strong>Price:</strong> KES {{ property.price|floatformat:0 }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Select Feature</h5>
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="feature" class="form-label">Choose Feature</label>
+                                    <select class="form-select" id="feature" name="feature" required>
+                                        <option value="">Select a feature...</option>
+                                        {% for value, label in features %}
+                                        <option value="{{ value }}">{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phone_number" class="form-label">M-Pesa Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone_number" name="phone_number"
+                                           placeholder="0712345678 or +254712345678" required>
+                                    <div class="form-text">Enter the phone number registered with M-Pesa</div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Initiate Payment</button>
+                                <a href="{% url 'property_detail' property.id %}" class="btn btn-secondary">Cancel</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-format phone number
+document.getElementById('phone_number').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.startsWith('254')) {
+        // Already in international format
+    } else if (value.startsWith('0')) {
+        value = '254' + value.substring(1);
+    } else if (value.length === 9) {
+        value = '254' + value;
+    }
+    e.target.value = value;
+});
+</script>
+{% endblock %}

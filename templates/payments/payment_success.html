@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Successful{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-check-circle"></i> Payment Successful
+                    </h3>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                        <h4>Thank you for your payment!</h4>
+                        <p class="text-muted">Your property feature has been activated successfully.</p>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5>Payment Details</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Property:</strong> {{ payment.property.title }}</p>
+                                    <p><strong>Feature:</strong> {{ payment.get_feature_display }}</p>
+                                    <p><strong>Amount:</strong> KES {{ payment.amount|floatformat:0 }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Phone:</strong> {{ payment.phone_number }}</p>
+                                    <p><strong>Status:</strong>
+                                        <span class="badge bg-success">{{ payment.get_status_display }}</span>
+                                    </p>
+                                    {% if transaction %}
+                                    <p><strong>Receipt:</strong> {{ transaction.mpesa_receipt_number }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if transaction %}
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5>Transaction Details</h5>
+                            <p><strong>M-Pesa Receipt:</strong> {{ transaction.mpesa_receipt_number }}</p>
+                            <p><strong>Transaction Date:</strong> {{ transaction.transaction_date|date:"M d, Y H:i" }}</p>
+                            <p><strong>Amount:</strong> KES {{ transaction.amount|floatformat:0 }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-4">
+                        <a href="{% url 'property_detail' payment.property.id %}" class="btn btn-success btn-lg">
+                            <i class="fas fa-eye"></i> View Property
+                        </a>
+                        <a href="{% url 'home' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

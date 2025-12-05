@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Status{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Payment Status</h3>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-clock fa-4x text-warning mb-3"></i>
+                        <h4>Processing Payment...</h4>
+                        <p class="text-muted">Please wait while we process your M-Pesa payment.</p>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5>Payment Details</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Property:</strong> {{ payment.property.title }}</p>
+                                    <p><strong>Feature:</strong> {{ payment.get_feature_display }}</p>
+                                    <p><strong>Amount:</strong> KES {{ payment.amount|floatformat:0 }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Phone:</strong> {{ payment.phone_number }}</p>
+                                    <p><strong>Status:</strong>
+                                        <span class="badge bg-warning">{{ payment.get_status_display }}</span>
+                                    </p>
+                                    {% if payment.customer_message %}
+                                    <p><strong>Message:</strong> {{ payment.customer_message }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-mobile-alt"></i> Check your phone:</h6>
+                        <p class="mb-0">You should have received an M-Pesa prompt on your phone. Please enter your PIN to complete the payment.</p>
+                    </div>
+
+                    <div class="mt-4">
+                        <button onclick="checkStatus()" class="btn btn-primary btn-lg" id="checkStatusBtn">
+                            <i class="fas fa-sync"></i> Check Payment Status
+                        </button>
+                        <a href="{% url 'property_detail' payment.property.id %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Property
+                        </a>
+                    </div>
+
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            If the payment is not processed within 5 minutes, it may have failed.
+                            <a href="{% url 'initiate_payment' payment.property.id %}">Try again</a>.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function checkStatus() {
+    const btn = document.getElementById('checkStatusBtn');
+    const originalText = btn.innerHTML;
+
+    // Disable button and show loading
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+
+    // Reload the page to check status
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000);
+}
+
+// Auto-check status every 10 seconds
+setInterval(() => {
+    // Only auto-check if status is still pending
+    if (document.querySelector('.badge.bg-warning')) {
+        window.location.reload();
+    }
+}, 10000);
+</script>
+{% endblock %}

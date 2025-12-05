@@ -8,6 +8,7 @@ urlpatterns = [
     path('', pages_views.home, name='home'),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),  # include accounts app URLs
+    path('billing/', include('billing.urls')),
 ]
 
 if settings.DEBUG:
