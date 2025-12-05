@@ -1,18 +1,44 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Available Properties{% endblock %}
 {% block content %}
-<h2>Available Properties</h2>
+<div class="property-list-container">
+    <h2 class="text-center mb-4">Available Properties</h2>
 
-{% for property in properties %}
-  <div class="card mb-3">
-    <div class="card-body">
-      <h5 class="card-title">{{ property.title }}</h5>
-      <p class="card-text">{{ property.location }} - ${{ property.price }}</p>
-      <a href="{% url 'property_detail' property.pk %}" class="btn btn-primary">View Details</a>
-    </div>
-  </div>
-{% empty %}
-  <p>No properties available.</p>
-{% endfor %}
-
+    {% for property in properties %}
+        <div class="card property-card mb-4">
+            {% if property.image %}
+                <img src="{{ property.image.url }}" class="card-img-top property-image" alt="{{ property.title }}">
+            {% else %}
+                <img src="{% static 'images/default-property.jpg' %}" class="card-img-top property-image" alt="Default Property Image">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title property-title">{{ property.title }}</h5>
+                <p class="card-text property-location">
+                    <i class="fas fa-map-marker-alt"></i> {{ property.location }}
+                </p>
+                <p class="card-text property-price">
+                    ${{ property.price|floatformat:0 }}
+                </p>
+                <div class="property-details">
+                    <div class="property-meta">
+                        {% if property.bedrooms %}
+                            <span><i class="fas fa-bed"></i> {{ property.bedrooms }} bed{% if property.bedrooms > 1 %}s{% endif %}</span>
+                        {% endif %}
+                        {% if property.bathrooms %}
+                            <span><i class="fas fa-bath"></i> {{ property.bathrooms }} bath{% if property.bathrooms > 1 %}s{% endif %}</span>
+                        {% endif %}
+                        <span><i class="fas fa-home"></i> {{ property.get_property_type_display }}</span>
+                    </div>
+                    <a href="{% url 'property_detail' property.pk %}" class="btn btn-primary btn-view-details">View Details</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="no-properties">
+            <i class="fas fa-home fa-3x mb-3"></i>
+            <p>No properties available at the moment.</p>
+        </div>
+    {% endfor %}
+</div>
 {% endblock %}
