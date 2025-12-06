@@ -7,8 +7,8 @@ from pages import views as pages_views
 urlpatterns = [
     path('', pages_views.home, name='home'),
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls')),  # include accounts app URLs
-    path('billing/', include('billing.urls')),
+    path('accounts/', include('accounts.urls')),  # accounts app URLs
+    path('billing/', include('billing.urls')),   # billing app URLs
 ]
 
 if settings.DEBUG:
