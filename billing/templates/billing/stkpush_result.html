@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+
+  {% if response %}
+    <div class="alert alert-success shadow-sm" role="alert">
+      <h4 class="alert-heading">Payment Request Sent ✅</h4>
+      <p><strong>MerchantRequestID:</strong> {{ response.MerchantRequestID }}</p>
+      <p><strong>CheckoutRequestID:</strong> {{ response.CheckoutRequestID }}</p>
+      <p><strong>Response:</strong> {{ response.ResponseDescription }}</p>
+      <hr>
+      <p class="mb-0">{{ response.CustomerMessage }}</p>
+    </div>
+  {% endif %}
+
+  {% if error %}
+    <div class="alert alert-danger shadow-sm" role="alert">
+      <h4 class="alert-heading">Payment Request Failed ❌</h4>
+      <p>{{ error }}</p>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

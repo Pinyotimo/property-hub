@@ -26,7 +26,7 @@ def stk_push(request):
         cl = MpesaClient()
         account_reference = 'PropertyHub'
         transaction_desc = 'Payment for property listing'
-        callback_url = 'https://your-ngrok-url/billing/mpesa/callback/'  # must be public
+        callback_url = 'https://mydomain.com/mpesa-express-simulate/'  # must be public
 
         response = cl.stk_push(
             phone_number,
