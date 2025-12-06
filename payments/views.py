@@ -182,11 +182,46 @@ def mpesa_callback(request):
                 value = item.get('Value')
                 transaction_data[name] = value
 
+            # Safely parse transaction date from callback metadata
+            raw_transaction_date = transaction_data.get('TransactionDate')
+            transaction_date = None
+
+            if raw_transaction_date:
+                if isinstance(raw_transaction_date, (int, float)):
+                    # Treat numeric values as milliseconds since epoch
+                    try:
+                        transaction_date = datetime.fromtimestamp(raw_transaction_date / 1000)
+                    except (OverflowError, OSError, ValueError) as e:
+                        logger.warning(
+                            "Failed to parse numeric TransactionDate '%s' for payment %s: %s",
+                            raw_transaction_date,
+                            payment.id,
+                            e,
+                        )
+                elif isinstance(raw_transaction_date, str):
+                    # Safaricom typically sends YYYYMMDDHHMMSS as a string
+                    try:
+                        transaction_date = datetime.strptime(raw_transaction_date, "%Y%m%d%H%M%S")
+                    except ValueError as e:
+                        logger.warning(
+                            "Failed to parse string TransactionDate '%s' for payment %s: %s",
+                            raw_transaction_date,
+                            payment.id,
+                            e,
+                        )
+                else:
+                    logger.warning(
+                        "Unexpected TransactionDate type '%s' (%s) for payment %s",
+                        type(raw_transaction_date).__name__,
+                        raw_transaction_date,
+                        payment.id,
+                    )
+
             # Create MpesaTransaction record
             MpesaTransaction.objects.create(
                 payment=payment,
                 mpesa_receipt_number=transaction_data.get('MpesaReceiptNumber'),
-                transaction_date=datetime.fromtimestamp(transaction_data.get('TransactionDate') / 1000) if transaction_data.get('TransactionDate') else None,
+                transaction_date=transaction_date,
                 phone_number=transaction_data.get('PhoneNumber'),
                 amount=transaction_data.get('Amount'),
                 result_code=str(result_code),
