@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Available Properties{% endblock %}
+{% block content %}
+<div class="property-list-container">
+    <h2 class="text-center mb-4">Available Properties</h2>
+
+    {% for property in properties %}
+        <div class="card property-card mb-4">
+            {% if property.image %}
+                <img src="{{ property.image.url }}" class="card-img-top property-thumbnail" alt="{{ property.title }}">
+            {% else %}
+                <img src="{% static 'images/default-property.jpg' %}" class="card-img-top property-image" alt="Default Property Image">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title property-title">{{ property.title }}</h5>
+                <p class="card-text property-location">
+                    <i class="fas fa-map-marker-alt"></i> {{ property.location }}
+                </p>
+                <p class="card-text property-price">
+                    ${{ property.price|floatformat:0 }}
+                </p>
+                <div class="property-details">
+                    <div class="property-meta">
+                        {% if property.bedrooms %}
+                            <span><i class="fas fa-bed"></i> {{ property.bedrooms }} bed{% if property.bedrooms > 1 %}s{% endif %}</span>
+                        {% endif %}
+                        {% if property.bathrooms %}
+                            <span><i class="fas fa-bath"></i> {{ property.bathrooms }} bath{% if property.bathrooms > 1 %}s{% endif %}</span>
+                        {% endif %}
+                        <span><i class="fas fa-home"></i> {{ property.get_property_type_display }}</span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'property_detail' property.pk %}" class="btn btn-primary btn-view-details">View Details</a>
+                        {% if request.user.is_authenticated %}
+                            {% if request.user == property.owner %}
+                                <a href="{% url 'property_update' property.pk %}" class="btn btn-outline-primary">Edit</a>
+                            {% endif %}
+                            {% if request.user == property.owner or request.user.is_superuser or request.user.is_staff %}
+                                <a href="{% url 'property_choose_image' property.pk %}" class="btn btn-outline-info">Choose Image</a>
+                                <a href="{% url 'property_delete' property.pk %}" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete this property? This action cannot be undone.');">Delete</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="no-properties">
+            <i class="fas fa-home fa-3x mb-3"></i>
+            <p>No properties available at the moment.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

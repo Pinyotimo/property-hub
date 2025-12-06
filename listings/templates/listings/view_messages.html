@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Messages about {{ property.title }}</h2>
+
+  {% if messages %}
+    <ul class="list-group">
+      {% for msg in messages %}
+        <li class="list-group-item">
+          <strong>{{ msg.sender.username }}</strong>: {{ msg.message }}<br>
+          <small class="text-muted">{{ msg.timestamp }}</small>
+
+          {% if msg.reply %}
+            <div class="mt-2 border-start ps-3">
+              <strong>Reply:</strong> {{ msg.reply }}<br>
+              <small class="text-muted">by {{ msg.replied_by.username }} at {{ msg.reply_timestamp }}</small>
+            </div>
+          {% elif request.user == property.owner %}
+            <form method="post" class="mt-2">
+              {% csrf_token %}
+              <input type="hidden" name="message_id" value="{{ msg.id }}">
+              <textarea name="reply" rows="2" class="form-control" placeholder="Reply..."></textarea>
+              <button type="submit" class="btn btn-sm btn-primary mt-1">Send Reply</button>
+            </form>
+          {% else %}
+            <div class="mt-2 text-warning">
+              <strong>Owner is currently unavailable.</strong><br>
+              Contact them directly at: {{ property.owner.email }}
+            </div>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No messages yet for this property.</p>
+  {% endif %}
+
+  <a href="{% url 'property_detail' property.pk %}" class="btn btn-link mt-3">← Back to Property</a>
+</div>
+{% endblock %}
