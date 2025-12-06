@@ -1,0 +1,31 @@
+<!-- templates/properties/my_listings.html -->
+{% extends "base.html" %}
+{% block title %}My listings{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">My listings</h1>
+  <a class="btn btn-primary" href="{% url 'properties:create' %}">New listing</a>
+</div>
+<div class="row g-3">
+  {% for p in properties %}
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card h-100">
+        {% with img=p.images.first %}
+          {% if img %}<img src="{{ img.image.url }}" class="card-img-top" alt="">{% endif %}
+        {% endwith %}
+        <div class="card-body">
+          <h5 class="card-title mb-1">{{ p.title }}</h5>
+          <p class="small text-muted mb-2">{{ p.address }}, {{ p.city }}</p>
+          <div class="d-grid gap-2">
+            <a class="btn btn-outline-primary" href="{{ p.get_absolute_url }}">View</a>
+            <a class="btn btn-outline-secondary" href="{% url 'properties:update' p.slug %}">Edit</a>
+            <a class="btn btn-outline-danger" href="{% url 'properties:delete' p.slug %}">Delete</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="col-12"><div class="alert alert-info">You have no listings yet.</div></div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+<!-- templates/properties/property_detail.html -->
+{% extends "base.html" %}
+{% block title %}{{ property.title }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h1 class="h3 mb-1">{{ property.title }}</h1>
+    <p class="text-muted mb-0">{{ property.address }}, {{ property.city }}, {{ property.state }} {{ property.zip_code }}</p>
+  </div>
+  <div class="text-end">
+    <span class="badge text-bg-secondary me-2">{{ property.get_property_type_display }}</span>
+    <span class="badge text-bg-{{ property.listing_type == 'rent'|yesno:'info,success' }}">{{ property.get_listing_type_display }}</span>
+    {% if user == property.owner %}
+      <div class="btn-group ms-2">
+        <a class="btn btn-outline-secondary" href="{% url 'properties:update' property.slug %}">Edit</a>
+        <a class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<div id="propertyCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    {% for img in property.images.all %}
+      <div class="carousel-item {% if forloop.first %}active{% endif %}">
+        <img src="{{ img.image.url }}" class="d-block w-100" alt="Photo">
+      </div>
+    {% empty %}
+      <div class="carousel-item active">
+        <img src="{% static 'img/placeholder-wide.jpg' %}" class="d-block w-100" alt="">
+      </div>
+    {% endfor %}
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span><span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span><span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+<div class="row g-4">
+  <div class="col-12 col-lg-8">
+    <div class="card">
+      <div class="card-body">
+        <h5>Description</h5>
+        <p>{{ property.description|linebreaks }}</p>
+      </div>
+    </div>
+    <div class="card mt-3">
+      <div class="card-body">
+        <h5>Features</h5>
+        <div class="row row-cols-2 row-cols-md-3 g-2">
+          <div class="col"><span class="badge text-bg-{{ property.has_parking|yesno:'success,secondary' }}">Parking</span></div>
+          <div class="col"><span class="badge text-bg-{{ property.has_pool|yesno:'success,secondary' }}">Pool</span></div>
+          <div class="col"><span class="badge text-bg-{{ property.has_gym|yesno:'success,secondary' }}">Gym</span></div>
+          <div class="col"><span class="badge text-bg-{{ property.has_garden|yesno:'success,secondary' }}">Garden</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Details</h5>
+        <p class="mb-1"><strong>Price:</strong> Ksh {{ property.price|floatformat:0 }}</p>
+        <p class="mb-1"><strong>Status:</strong> {{ property.get_status_display }}</p>
+        <p class="mb-1"><strong>Bedrooms:</strong> {{ property.bedrooms }}</p>
+        <p class="mb-1"><strong>Bathrooms:</strong> {{ property.bathrooms }}</p>
+        <p class="mb-1"><strong>Area:</strong> {{ property.square_feet }} sqft</p>
+        <p class="mb-1"><strong>Type:</strong> {{ property.get_property_type_display }}</p>
+        <p class="mb-1"><strong>Listing:</strong> {{ property.get_listing_type_display }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Delete listing</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+    <div class="modal-body">Delete "{{ property.title }}"? This cannot be undone.</div>
+    <div class="modal-footer">
+      <form method="post" action="{% url 'properties:delete' property.slug %}">{% csrf_token %}
+        <button class="btn btn-danger">Delete</button>
+      </form>
+      <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    </div>
+  </div></div>
+</div>
+{% endblock %}

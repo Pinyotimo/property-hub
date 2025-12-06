@@ -1,0 +1,58 @@
+<!-- templates/properties/property_form.html -->
+{% extends "base.html" %}
+{% block title %}{{ action }} property{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">{{ action }} property</h1>
+<form method="post" novalidate enctype="multipart/form-data" class="needs-validation">
+  {% csrf_token %}
+  <div class="row g-3">
+    {% for field in form %}
+      <div class="col-12 col-md-6">
+        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {% if field.field.widget.input_type == 'checkbox' %}
+          <div class="form-check">
+            {{ field }}
+            {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+          </div>
+        {% else %}
+          {{ field }}
+          {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <hr class="my-4">
+  <h5>Images</h5>
+  {{ formset.management_form }}
+  <div class="row g-3">
+    {% for f in formset.forms %}
+      <div class="col-12 col-md-6">
+        <div class="card p-3 h-100">
+          {% for field in f %}
+            <div class="mb-2">
+              <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {% if field.name == 'is_primary' %}
+                <div class="form-check">{{ field }}</div>
+              {% else %}
+                {{ field }}
+              {% endif %}
+              {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+            </div>
+          {% endfor %}
+          {% if f.instance.pk %}
+            <div class="mt-2">
+              <img src="{{ f.instance.image.url }}" class="img-fluid rounded" alt="">
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="d-flex gap-2 mt-4">
+    <button class="btn btn-primary">{{ action }}</button>
+    <a href="{% url 'properties:list' %}" class="btn btn-secondary">Cancel</a>
+  </div>
+</form>
+{% endblock %}
