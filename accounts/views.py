@@ -1,37 +1,52 @@
-
+# accounts/views.py
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth import login
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, UserUpdateForm
 
-def profile(request):
-    return render(request, "accounts/profile.html")
+from .forms import RegisterForm, LoginForm, ProfileForm
 
-def register(request):
-    if request.method == "POST":
-        form = UserRegistrationForm(request.POST)
+
+def register_view(request):
+    """Handle user registration."""
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
         if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f"Account created successfully for {username}! You can now login.")
-            return redirect("login")
+            user = form.save()
+            messages.success(request, 'Account created successfully!')
+            login(request, user)  # log the user in immediately
+            return redirect('home')  # redirect to homepage
+        else:
+            messages.error(request, 'Please correct the errors below.')
     else:
-        form = UserRegistrationForm()
-    return render(request, "accounts/register.html", {"form": form})
+        form = RegisterForm()
+    return render(request, 'accounts/register.html', {'form': form})
+
+
+class LoginPageView(LoginView):
+    """Custom login view using Bootstrap form."""
+    template_name = 'accounts/login.html'
+    authentication_form = LoginForm
+
 
 @login_required
-def edit_profile(request):
-    if request.method == "POST":
-        form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
+def profile_view(request):
+    """Display the logged-in user's profile."""
+    return render(request, 'accounts/profile.html')
+
+
+@login_required
+def profile_edit_view(request):
+    """Allow the logged-in user to edit their profile."""
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            messages.success(request, "Your profile has been updated successfully!")
-            return redirect("profile")
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('accounts:profile')  # ✅ namespaced redirect
+        else:
+            messages.error(request, 'Please correct the errors below.')
     else:
-        form = UserUpdateForm(instance=request.user)
-    return render(request, "accounts/edit_profile.html", {"form": form})
-
-# ✅ Place your logout confirmation view here
-def logout_confirmation(request):
-    messages.info(request, "You’ve been logged out successfully.")
-    return render(request, "accounts/logout_confirmation.html")
+        form = ProfileForm(instance=request.user)
+    return render(request, 'accounts/profile_edit.html', {'form': form})

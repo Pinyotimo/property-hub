@@ -1,0 +1,11 @@
+<!-- templates/properties/property_confirm_delete.html -->
+{% extends "base.html" %}
+{% block title %}Delete property{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">Delete property</h1>
+<p>Are you sure you want to delete "{{ object.title }}"?</p>
+<form method="post">{% csrf_token %}
+  <button class="btn btn-danger">Delete</button>
+  <a class="btn btn-secondary" href="{{ object.get_absolute_url }}">Cancel</a>
+</form>
+{% endblock %}

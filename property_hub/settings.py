@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'properties',
     'payments',
     'pages',
+    'profiles',
 ]
 
 MIDDLEWARE = [

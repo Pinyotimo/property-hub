@@ -9,39 +9,50 @@
     <hr class="my-4">
     {% if user.is_authenticated %}
         <p>Welcome back, {{ user.username }}!</p>
-        <a class="btn btn-primary btn-lg" href="{% url 'profile' %}" role="button">View Profile</a>
+        <div class="d-flex gap-2">
+            <a class="btn btn-primary btn-lg" href="{% url 'accounts:profile' %}" role="button">View Profile</a>
+            <a class="btn btn-outline-secondary btn-lg" href="{% url 'accounts:profile_edit' %}" role="button">Edit Profile</a>
+        </div>
     {% else %}
         <p>Get started by creating an account or logging in.</p>
-        <a class="btn btn-primary btn-lg" href="{% url 'register' %}" role="button">Register</a>
-        <a class="btn btn-outline-primary btn-lg" href="{% url 'login' %}" role="button">Login</a>
+        <div class="d-flex gap-2">
+            <a class="btn btn-primary btn-lg" href="{% url 'accounts:register' %}" role="button">Register</a>
+            <a class="btn btn-outline-primary btn-lg" href="{% url 'accounts:login' %}" role="button">Login</a>
+        </div>
     {% endif %}
 </div>
 
 <div class="row">
     <div class="col-md-4">
-        <div class="card mb-4">
-            <div class="card-body">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
                 <h5 class="card-title">Properties</h5>
                 <p class="card-text">Browse and manage property listings.</p>
+                <a href="{% url 'properties:list' %}" class="btn btn-sm btn-primary mt-auto">Browse Properties</a>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card mb-4">
-            <div class="card-body">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
                 <h5 class="card-title">Payments</h5>
                 <p class="card-text">Handle property-related payments securely.</p>
+                <a href="#" class="btn btn-sm btn-outline-secondary disabled mt-auto">Coming Soon</a>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card mb-4">
-            <div class="card-body">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
                 <h5 class="card-title">Account Management</h5>
                 <p class="card-text">Manage your profile and settings.</p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:profile_edit' %}" class="btn btn-sm btn-secondary mt-auto">Edit Profile</a>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn btn-sm btn-outline-secondary mt-auto">Login to Manage</a>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
-
