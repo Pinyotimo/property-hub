@@ -1,7 +1,6 @@
 """
 Django settings for property_hub project.
 """
-
 from pathlib import Path
 import os
 from decouple import config
@@ -97,8 +96,9 @@ AUTH_USER_MODEL = 'accounts.User'
 
 LOGIN_REDIRECT_URL = 'profile'
 LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'property_list'
 LOGOUT_REDIRECT_URL = 'logout_confirmation'
-
+LOGOUT_REDIRECT_URL = 'home'  # or 'login' or 'property_list'
 # M-Pesa Configuration
 MPESA_ENVIRONMENT = 'sandbox'
 MPESA_CONSUMER_KEY = 'Bk7j0gv0nJNiYhwX7X8WAqQqPBs9xLQX7VwkvvAAtsFAkYCm'

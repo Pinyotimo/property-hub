@@ -3,45 +3,76 @@
 {% block title %}Home - Property Hub{% endblock %}
 
 {% block content %}
-<div class="jumbotron bg-light p-5 rounded mb-4">
-    <h1 class="display-4">Welcome to Property Hub</h1>
-    <p class="lead">Your one-stop destination for property listings and management.</p>
-    <hr class="my-4">
-    {% if user.is_authenticated %}
-        <p>Welcome back, {{ user.username }}!</p>
-        <a class="btn btn-primary btn-lg" href="{% url 'profile' %}" role="button">View Profile</a>
-    {% else %}
-        <p>Get started by creating an account or logging in.</p>
-        <a class="btn btn-primary btn-lg" href="{% url 'register' %}" role="button">Register</a>
-        <a class="btn btn-outline-primary btn-lg" href="{% url 'login' %}" role="button">Login</a>
-    {% endif %}
-</div>
+<style>
+    /* Warm colourful background */
+    .bg-peach {
+        background-color: #F9E8D6; /* soft peach tone */
+    }
+    .bg-gradient {
+        background-image: linear-gradient(to bottom right, #856b4f, #161615);
+    }
 
-<div class="row">
-    <div class="col-md-4">
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Properties</h5>
-                <p class="card-text">Browse and manage property listings.</p>
-            </div>
+    /* Card styling */
+    .card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    /* Button tweaks */
+    .btn-lg {
+        border-radius: 8px;
+        font-weight: 500;
+    }
+</style>
+
+<div class="bg-gradient text-dark py-5 px-3">
+    <div class="container">
+        <div class="bg-light p-5 rounded shadow-sm mb-5 text-center">
+            <h1 class="display-4 text-primary">Welcome to Property Hub</h1>
+            <p class="lead text-muted">Your one-stop destination for property listings and management.</p>
+            <hr class="my-4">
+            {% if user.is_authenticated %}
+                <p class="fs-5">Welcome back, <strong>{{ user.username }}</strong>!</p>
+                <a class="btn btn-primary btn-lg me-2" href="{% url 'profile' %}">View Profile</a>
+            {% else %}
+                <p class="fs-5">Get started by creating an account or logging in.</p>
+                <a class="btn btn-primary btn-lg me-2" href="{% url 'register' %}">Register</a>
+                <a class="btn btn-outline-primary btn-lg" href="{% url 'login' %}">Login</a>
+            {% endif %}
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Payments</h5>
-                <p class="card-text">Handle property-related payments securely.</p>
+
+        <div class="row text-center">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                        <i class="bi bi-house-door-fill fs-2 text-primary mb-3"></i>
+                        <h5 class="card-title">Properties</h5>
+                        <p class="card-text text-muted">Browse and manage property listings.</p>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Account Management</h5>
-                <p class="card-text">Manage your profile and settings.</p>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                        <i class="bi bi-credit-card-fill fs-2 text-success mb-3"></i>
+                        <h5 class="card-title">Payments</h5>
+                        <p class="card-text text-muted">Handle property-related payments securely.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                        <i class="bi bi-person-circle fs-2 text-info mb-3"></i>
+                        <h5 class="card-title">Account Management</h5>
+                        <p class="card-text text-muted">Manage your profile and settings.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
-

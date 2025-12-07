@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h3 class="mb-0">{{ property.title }}</h3>
+    </div>
+    <div class="card-body bg-light">
+      <p><strong>Price:</strong> KSh {{ property.price }}</p>
+      <p><strong>Location:</strong> {{ property.city }}, {{ property.state }} {{ property.zip_code }}</p>
+      <p><strong>Type:</strong> {{ property.property_type }} | {{ property.listing_type }}</p>
+      <p><strong>Status:</strong> {{ property.status }}</p>
+      <p><strong>Size:</strong> {{ property.square_feet }} sq ft</p>
+      <p><strong>Features:</strong>
+        {% if property.has_parking %}🚗 Parking {% endif %}
+        {% if property.has_pool %}🏊 Pool {% endif %}
+        {% if property.has_gym %}💪 Gym {% endif %}
+        {% if property.has_garden %}🌳 Garden {% endif %}
+      </p>
+      <p>{{ property.description }}</p>
+
+      {% if property.images.exists %}
+        <hr>
+        <h5>📸 Property Images</h5>
+        <div class="row">
+          {% for img in property.images.all %}
+            <div class="col-md-4 mb-3">
+              <img src="{{ img.image.url }}" class="img-fluid rounded shadow-sm" alt="Property Image">
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if user == property.owner %}
+        <div class="mt-4">
+          <a href="{% url 'edit_property' property.slug %}" class="btn btn-warning">✏️ Edit</a>
+          <a href="{% url 'delete_property' property.slug %}" class="btn btn-danger">🗑️ Delete</a>
+        </div>
+      {% else %}
+        <hr>
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="message" class="form-label fw-bold">Send a message to the owner:</label>
+            <textarea name="message" rows="3" class="form-control" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">📨 Send Message</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

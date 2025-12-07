@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-lg border-0">
+    <div class="card-header bg-warning text-dark">
+      <h4 class="mb-0">✏️ Edit Property: {{ property.title }}</h4>
+    </div>
+    <div class="card-body bg-light">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label fw-bold">{{ field.label }}</label>
+            {{ field }}
+          </div>
+        {% endfor %}
+        <hr>
+        <h5 class="text-secondary">📸 Update Property Image</h5>
+        {% for field in image_form %}
+          <div class="mb-3">
+            <label class="form-label fw-bold">{{ field.label }}</label>
+            {{ field }}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-success">💾 Save Changes</button>
+        <a href="{% url 'property_detail' property.slug %}" class="btn btn-secondary">Cancel</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

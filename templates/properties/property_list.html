@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center text-light mb-4">
+    🏡 <span class="fw-bold text-info">Available Properties</span>
+  </h2>
+
+  <!-- Add Property Button (only for logged-in users) -->
+  {% if user.is_authenticated %}
+    <div class="text-end mb-4">
+      <a href="{% url 'add_property' %}" class="btn btn-primary">
+        + Add New Property
+      </a>
+    </div>
+  {% endif %}
+
+  <div class="row">
+    {% for property in properties %}
+    <div class="col-md-6 col-lg-4 mb-4">
+      <div class="card h-100 bg-secondary text-light border-0 shadow-sm">
+        {% if property.images.first %}
+        <img src="{{ property.images.first.image.url }}" 
+             class="card-img-top object-fit-cover" 
+             alt="{{ property.title }}" 
+             style="height: 250px; width: 100%;">
+        {% else %}
+        <img src="{% static 'images/default-property.jpg' %}" 
+             class="card-img-top object-fit-cover" 
+             alt="Default image" 
+             style="height: 250px; width: 100%;">
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ property.title }}</h5>
+          <p class="card-text">{{ property.city }}, {{ property.state }}</p>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-success">KES {{ property.price|floatformat:2 }}</span>
+            <span class="badge 
+              {% if property.status == 'available' %}bg-primary
+              {% elif property.status == 'sold' %}bg-danger
+              {% elif property.status == 'rented' %}bg-warning text-dark
+              {% else %}bg-secondary{% endif %}">
+              {{ property.status|title }}
+            </span>
+          </div>
+          <a href="{% url 'property_detail' property.slug %}" class="btn btn-outline-light w-100 mt-2">
+            View Details
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-primary mb-4">📩 Messages for Your Properties</h2>
+
+  {% if messages %}
+    <div class="list-group">
+      {% for msg in messages %}
+        <div class="list-group-item list-group-item-action mb-3 shadow-sm">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1 text-dark">
+              🏡 {{ msg.property.title }}
+            </h5>
+            <small class="text-muted">
+              {{ msg.created_at|date:"M d, Y H:i" }}
+            </small>
+          </div>
+          <p class="mb-1">{{ msg.content }}</p>
+          <small class="text-muted">
+            From: {{ msg.sender.username if msg.sender else "Anonymous" }}
+          </small>
+
+          <div class="mt-2">
+            {% if not msg.is_read %}
+              <span class="badge bg-warning text-dark">New</span>
+              <a href="{% url 'mark_message_read' msg.pk %}" 
+                 class="btn btn-sm btn-outline-success ms-2">
+                ✅ Mark as Read
+              </a>
+            {% else %}
+              <span class="badge bg-secondary">Read</span>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      You have no messages yet.
+    </div>
+  {% endif %}
+
+  <a href="{% url 'property_list' %}" class="btn btn-outline-primary mt-4">
+    ← Back to Properties
+  </a>
+</div>
+{% endblock %}

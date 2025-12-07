@@ -31,6 +31,10 @@ def edit_profile(request):
         form = UserUpdateForm(instance=request.user)
     return render(request, "accounts/edit_profile.html", {"form": form})
 
+def logout(request):
+    messages.info(request, "You’ve been logged out successfully.")
+    return render(request, "accounts/logout.html")
+
 # ✅ Place your logout confirmation view here
 def logout_confirmation(request):
     messages.info(request, "You’ve been logged out successfully.")
