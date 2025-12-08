@@ -6,17 +6,33 @@ from .forms import PropertyForm
 
 # List all properties
 def property_list(request):
+    """Display all properties."""
     properties = Property.objects.all()
     return render(request, "listings/property_list.html", {"properties": properties})
 
+
 # Show details of a single property
 def property_detail(request, pk):
+    """Display details of a single property."""
     property_obj = get_object_or_404(Property, pk=pk)
     return render(request, "listings/property_detail.html", {"property": property_obj})
+
+
+# Show the latest property for the logged-in user
+@login_required
+def latest_property_view(request):
+    """Redirect to the most recent property owned by the logged-in user."""
+    latest = Property.objects.filter(owner=request.user).last()
+    if latest:
+        return redirect("property_detail", pk=latest.pk)
+    # Fallback if no property exists
+    return render(request, "listings/no_property.html")
+
 
 # Create a new property
 @login_required
 def property_create(request):
+    """Create a new property owned by the logged-in user."""
     if request.method == "POST":
         form = PropertyForm(request.POST, request.FILES)
         if form.is_valid():
@@ -28,9 +44,11 @@ def property_create(request):
         form = PropertyForm()
     return render(request, "listings/property_form.html", {"form": form, "title": "Add New Property"})
 
+
 # Update an existing property
 @login_required
 def property_update(request, pk):
+    """Update an existing property."""
     property_obj = get_object_or_404(Property, pk=pk)
     if request.method == "POST":
         form = PropertyForm(request.POST, request.FILES, instance=property_obj)
@@ -41,18 +59,22 @@ def property_update(request, pk):
         form = PropertyForm(instance=property_obj)
     return render(request, "listings/property_form.html", {"form": form, "title": "Edit Property"})
 
+
 # Delete a property
 @login_required
 def property_delete(request, pk):
+    """Delete a property."""
     property_obj = get_object_or_404(Property, pk=pk)
     if request.method == "POST":
         property_obj.delete()
         return redirect("property_list")
     return render(request, "listings/property_confirm_delete.html", {"property": property_obj})
 
+
 # Choose an image for a property
 @login_required
 def property_choose_image(request, pk):
+    """Upload or change the image for a property."""
     property_obj = get_object_or_404(Property, pk=pk)
     if request.method == "POST" and request.FILES.get("image"):
         property_obj.image = request.FILES["image"]
@@ -60,9 +82,11 @@ def property_choose_image(request, pk):
         return redirect("property_detail", pk=property_obj.pk)
     return render(request, "listings/property_choose_image.html", {"property": property_obj})
 
+
 # Send a message about a property
 @login_required
 def send_message(request, pk):
+    """Send a message about a property."""
     property_obj = get_object_or_404(Property, pk=pk)
     if request.method == "POST":
         content = request.POST.get("message")
@@ -75,9 +99,11 @@ def send_message(request, pk):
             return redirect("view_messages", pk=property_obj.pk)
     return render(request, "listings/send_message.html", {"property": property_obj})
 
+
 # View all messages for a property (with reply support)
 @login_required
 def view_messages(request, pk):
+    """View all messages for a property, with reply support for the owner."""
     property_obj = get_object_or_404(Property, pk=pk)
     messages = property_obj.messages.all()
 

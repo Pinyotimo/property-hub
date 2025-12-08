@@ -2,9 +2,9 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
 
-
-# Create your models here.
+# Get custom user model
 User = get_user_model()
+
 
 class Property(models.Model):
     PROPERTY_TYPE_CHOICES = [
@@ -27,7 +27,13 @@ class Property(models.Model):
         ('pending', 'Pending'),
     ]
     
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='properties')
+    # ✅ UNIQUE related_name to avoid clash with listings.Property
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='properties_properties_app'  # make unique
+    )
+    
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True)
     description = models.TextField()
@@ -69,6 +75,7 @@ class Property(models.Model):
     
     def __str__(self):
         return self.title
+
 
 class PropertyImage(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='images')

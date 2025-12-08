@@ -2,41 +2,75 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2>{{ property.title }}</h2>
-  <p><strong>Location:</strong> {{ property.location }}</p>
-  <p><strong>Price:</strong> ${{ property.price }}</p>
-  <p><strong>Type:</strong> {{ property.get_property_type_display }}</p>
-  <p><strong>Bedrooms:</strong> {{ property.bedrooms }}</p>
-  <p><strong>Bathrooms:</strong> {{ property.bathrooms }}</p>
-  <p><strong>Listed on:</strong> {{ property.listed_date }}</p>
-
-  {% if property.image %}
-    <img src="{{ property.image.url }}" class="img-fluid mt-3" alt="Property Image">
-  {% endif %}
-
-  {% if request.user.is_authenticated %}
-    <div class="mt-3">
-      {% if request.user != property.owner %}
-        <a href="{% url 'send_message' property.pk %}" class="btn btn-outline-success btn-sm">Contact Owner</a>
-        <a href="{% url 'view_messages' property.pk %}" class="btn btn-outline-info btn-sm">View Messages</a>
-      {% endif %}
-
-      {% if request.user == property.owner %}
-        <a href="{% url 'property_choose_image' property.pk %}" class="btn btn-outline-secondary btn-sm">Choose Image</a>
-        <a href="{% url 'property_update' property.pk %}" class="btn btn-outline-primary btn-sm">Edit</a>
-        <a href="{% url 'view_messages' property.pk %}" class="btn btn-outline-info btn-sm">View Messages</a>
-      {% endif %}
-
-      {% if request.user == property.owner or request.user.is_superuser or request.user.is_staff %}
-        <a href="{% url 'property_delete' property.pk %}" class="btn btn-danger btn-sm"
-           onclick="return confirm('Are you sure you want to delete this property? This action cannot be undone.');">
-           Delete
-        </a>
+<div class="container mt-5 p-4 rounded shadow" style="background-color: #f5f7fa;">
+  <div class="row g-4">
+    <!-- Image Section -->
+    <div class="col-md-6">
+      {% if property.image %}
+        <img src="{{ property.image.url }}" class="img-fluid rounded shadow-sm" alt="Property Image">
+      {% else %}
+        <img src="{% static 'images/default-property.jpg' %}" class="img-fluid rounded shadow-sm" alt="Default Property">
       {% endif %}
     </div>
-  {% endif %}
 
-  <a href="{% url 'property_list' %}" class="btn btn-link mt-4">← Back to Listings</a>
+    <!-- Details Section -->
+    <div class="col-md-6">
+      <h2 class="text-primary fw-bold">{{ property.title }}</h2>
+      <p class="text-muted">{{ property.description }}</p>
+
+      <ul class="list-unstyled fs-6">
+        <li>💰 <strong>Price:</strong> KES {{ property.price }}</li>
+        <li>📍 <strong>Location:</strong> {{ property.location }}</li>
+        <li>🏠 <strong>Type:</strong> {{ property.get_property_type_display }}</li>
+        <li>🛏️ <strong>Bedrooms:</strong> {{ property.bedrooms }} | 🚽 <strong>Bathrooms:</strong> {{ property.bathrooms }}</li>
+        <li>📐 <strong>Size:</strong> {{ property.size }} sq ft</li>
+        <li>📅 <strong>Listed on:</strong> {{ property.listed_date }}</li>
+        <li>
+          {% if property.status == "available" %}
+            ✅ <strong>Status:</strong> <span class="badge bg-success">Available</span>
+          {% else %}
+            ❌ <strong>Status:</strong> <span class="badge bg-secondary">Unavailable</span>
+          {% endif %}
+        </li>
+      </ul>
+
+      <!-- Amenities -->
+      {% if property.amenities %}
+        <div class="mt-3">
+          <h6 class="fw-semibold">Amenities:</h6>
+          <div class="d-flex flex-wrap gap-2">
+            {% for amenity in property.amenities.all %}
+              <span class="badge bg-light text-dark border">{{ amenity.name }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Action Buttons -->
+      {% if request.user.is_authenticated %}
+        <div class="mt-4">
+          {% if request.user != property.owner %}
+            <a href="{% url 'send_message' property.pk %}" class="btn btn-outline-primary btn-sm me-2">Contact Owner</a>
+            <a href="{% url 'view_messages' property.pk %}" class="btn btn-info btn-sm">View Messages</a>
+          {% endif %}
+
+          {% if request.user == property.owner %}
+            <a href="{% url 'property_choose_image' property.pk %}" class="btn btn-secondary btn-sm me-2">Choose Image</a>
+            <a href="{% url 'property_update' property.pk %}" class="btn btn-primary btn-sm me-2">Edit</a>
+            <a href="{% url 'view_messages' property.pk %}" class="btn btn-info btn-sm">View Messages</a>
+          {% endif %}
+
+          {% if request.user == property.owner or request.user.is_superuser or request.user.is_staff %}
+            <a href="{% url 'property_delete' property.pk %}" class="btn btn-danger btn-sm mt-2"
+               onclick="return confirm('Are you sure you want to delete this property? This action cannot be undone.');">
+               Delete
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <a href="{% url 'property_list' %}" class="btn btn-outline-secondary mt-4">← Back to Listings</a>
+    </div>
+  </div>
 </div>
 {% endblock %}

@@ -26,18 +26,29 @@
     z-index: 0;
   }
 
+  @media (max-width: 768px) {
+    .overlay {
+      background-color: rgba(255, 255, 255, 0.5); /* lighter overlay for mobile */
+    }
+  }
+
   .container {
     position: relative;
     z-index: 1;
   }
 
   .card {
-    border-radius: 2px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px); /* glassmorphism effect */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
   }
 
   .card-header {
+    background: linear-gradient(135deg, #007bff, #00c6ff);
     font-weight: 600;
     letter-spacing: 0.5px;
+    color: #fff;
   }
 
   .card-body {
@@ -46,12 +57,24 @@
 
   .rounded-circle {
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    object-fit: cover;
+    width: 80px;
+    height: 80px;
+  }
+  @media (min-width: 992px) {
+    .rounded-circle {
+      width: 100px;
+      height: 100px;
+    }
   }
 
   .list-group-item {
     background-color: transparent;
-    border: none;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
     font-size: 0.95rem;
+  }
+  .list-group-item:last-child {
+    border-bottom: none;
   }
 
   .btn-custom {
@@ -62,6 +85,8 @@
 
   .btn-custom:hover {
     transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    opacity: 0.95;
   }
 </style>
 
@@ -70,8 +95,8 @@
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-lg-6 col-md-8 col-sm-10">
-        <div class="card shadow-lg border-0 rounded">
-          <div class="card-header bg-primary text-white text-center">
+        <div class="card border-0 rounded">
+          <div class="card-header text-center">
             <h2 class="mb-0">User Profile</h2>
           </div>
           <div class="card-body">
@@ -87,7 +112,7 @@
               <div class="d-flex align-items-center mb-4 border-bottom pb-3">
                 <img src="{% if request.user.profile_picture %}{{ request.user.profile_picture.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}"
                      class="rounded-circle me-3 border border-3 border-primary"
-                     alt="User Avatar" width="100" height="100">
+                     alt="User Avatar">
                 <div>
                   <h4 class="card-title mb-1">{{ request.user.username }}</h4>
                   <p class="text-muted mb-0">{{ request.user.email }}</p>
@@ -108,7 +133,10 @@
                 <a href="{% url 'password_change' %}" class="btn btn-warning btn-custom me-2">Change Password</a>
                 <form method="post" action="{% url 'logout' %}" class="d-inline">
                   {% csrf_token %}
-                  <button type="submit" class="btn btn-danger btn-custom">Logout</button>
+                  <button type="submit" class="btn btn-danger btn-custom"
+                          onclick="return confirm('Are you sure you want to logout?')">
+                    Logout
+                  </button>
                 </form>
               </div>
 

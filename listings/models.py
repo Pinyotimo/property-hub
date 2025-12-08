@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.urls import reverse
 
 
@@ -19,7 +19,14 @@ class Property(models.Model):
     bathrooms = models.PositiveIntegerField(blank=True, null=True)
     property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES)
     listed_date = models.DateTimeField(auto_now_add=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="properties")
+
+    # ✅ Unique related_name to avoid clash with properties.Property
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="listings_properties"  # unique
+    )
+
     image = models.ImageField(upload_to="property_images/", blank=True, null=True)
 
     class Meta:
@@ -34,31 +41,35 @@ class Property(models.Model):
 
 class Message(models.Model):
     sender = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='sent_messages'
     )
+
     property = models.ForeignKey(
         Property,
         on_delete=models.CASCADE,
         related_name='messages'
     )
+
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    # ✅ Reply support for owner
+    # Reply support
     reply = models.TextField(blank=True, null=True)
+
     replied_by = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name='replied_messages'
     )
+
     reply_timestamp = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         ordering = ['-timestamp']
 
     def __str__(self):
-        return f"Message from {self.sender.username} about {self.property.title}"
+        return f"Message from {self.sender} about {self.property.title}"
