@@ -3,11 +3,14 @@
 
 {% block content %}
 <div class="row justify-content-center mt-5">
-    <div class="col-md-6 text-center">
-        <h2>You have been logged out</h2>
-        <p>Thank you for using Property Hub.</p>
-        <a href="{% url 'login' %}" class="btn btn-primary me-2">Login again</a>
-        <a href="{% url 'home' %}" class="btn btn-outline-secondary">Go to Homepage</a>
-    </div>
+  <div class="col-md-6 text-center">
+    <h3>Confirm Logout</h3>
+    <p>Are you sure you want to log out?</p>
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger me-2">Yes, Logout</button>
+      <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
 </div>
 {% endblock %}

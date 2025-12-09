@@ -5,20 +5,21 @@
 <style>
   .page-bg {
     min-height: 100vh;
-    background: url("{% static 'images/pexels-mahmoud-zakariya-2154822140-34975232 (2).jpg' %}") center center no-repeat;
+    background: url("{% static '' %}") center center no-repeat;
     background-size: cover;
     background-attachment: fixed;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
   }
 
   .overlay {
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(255, 255, 255, 0.6); /* softer warm overlay */
-    backdrop-filter: blur(4px);
+    background: rgba(255, 255, 255, 0.55); /* softer overlay */
+    backdrop-filter: blur(6px);
     z-index: 0;
   }
 
@@ -28,19 +29,24 @@
   }
 
   .card {
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(14px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.15);
     overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-4px);
   }
 
   .card-header {
-    background: linear-gradient(135deg, #ff9966, #ff5e62); /* warm gradient */
+    background: linear-gradient(135deg, #ff9966, #ff5e62);
     font-weight: 700;
     letter-spacing: 0.5px;
     color: #fff;
-    padding: 1rem;
+    padding: 1.2rem;
+    text-transform: uppercase;
   }
 
   .card-body {
@@ -48,38 +54,43 @@
   }
 
   .rounded-circle {
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
     object-fit: cover;
-    width: 90px;
-    height: 90px;
+    width: 95px;
+    height: 95px;
     border: 3px solid #ff9966;
+    transition: transform 0.3s ease;
+  }
+  .rounded-circle:hover {
+    transform: scale(1.05);
   }
   @media (min-width: 992px) {
     .rounded-circle {
-      width: 110px;
-      height: 110px;
+      width: 120px;
+      height: 120px;
     }
   }
 
   .list-group-item {
     background-color: transparent;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-    font-size: 0.95rem;
-    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    font-size: 1rem;
+    padding: 0.85rem 0;
   }
   .list-group-item:last-child {
     border-bottom: none;
   }
 
   .btn-custom {
-    min-width: 150px;
+    min-width: 160px;
     font-weight: 600;
     border-radius: 30px;
     transition: all 0.3s ease;
+    padding: 0.6rem 1.2rem;
   }
   .btn-custom:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
     opacity: 0.95;
   }
 </style>

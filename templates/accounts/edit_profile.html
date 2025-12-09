@@ -1,34 +1,60 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #fbc2eb, #f6d365); /* warm gradient */
+  }
+  .form-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.15);
+    padding: 2rem;
+  }
+  .form-card h2 {
+    font-weight: 700;
+    color: #d35400; /* warm accent */
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  .btn-gradient {
+    background: linear-gradient(90deg, #ff9966, #ff5e62);
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    transition: box-shadow 0.3s ease;
+  }
+  .btn-gradient:hover {
+    box-shadow: 0 0 12px rgba(255, 94, 98, 0.6);
+  }
+</style>
+
 {% block title %}Edit Profile - Property Hub{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
   <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow-lg border-0 rounded">
-        <div class="card-header bg-primary text-white text-center">
-          <h2 class="mb-0">Edit Profile</h2>
-        </div>
-        <div class="card-body">
+    <div class="col-md-8">
+      <div class="form-card">
+        <h2>✏️ Edit Profile</h2>
 
-          {% if messages %}
-            {% for message in messages %}
-              <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-          {% endif %}
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
 
-          {% if form.errors %}
-            <div class="alert alert-danger">Please correct the errors below.</div>
-          {% endif %}
+          <!-- Render all fields with Crispy Forms -->
+          {{ form|crispy }}
 
-          <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
-          </form>
-        </div>
+          <!-- Buttons -->
+          <div class="d-flex justify-content-between mt-4">
+            <button type="submit" class="btn btn-gradient">💾 Save Changes</button>
+            <a href="{% url 'profile' %}" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
       </div>
     </div>
   </div>

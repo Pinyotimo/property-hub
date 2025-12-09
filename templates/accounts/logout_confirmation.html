@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Logout - Property Hub{% endblock %}
+{% block title %}Logout Confirmation - Property Hub{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center mt-5">
@@ -11,10 +11,20 @@
       {% endfor %}
     {% endif %}
 
-    <h2>You have been logged out</h2>
-    <p>Thank you for using Property Hub.</p>
+    <div class="alert alert-success" role="alert">
+      <h4 class="alert-heading">You have been logged out</h4>
+      <p>Thank you for using Property Hub. Redirecting you shortly...</p>
+    </div>
+
     <a href="{% url 'login' %}" class="btn btn-primary me-2">Login again</a>
     <a href="{% url 'home' %}" class="btn btn-outline-secondary">Go to Homepage</a>
   </div>
 </div>
+
+<!-- Auto redirect after 1 second -->
+<script>
+  setTimeout(function() {
+    window.location.href = "{% url 'home' %}";
+  }, 1000);
+</script>
 {% endblock %}
