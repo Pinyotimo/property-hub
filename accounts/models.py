@@ -2,14 +2,17 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+
 class User(AbstractUser):
     """
     Custom User model extending Django's AbstractUser.
     Adds email as a unique identifier, role, and extra profile fields.
     """
+
     class Roles(models.TextChoices):
         ADMIN = 'admin', _('Admin')
         BUYER = 'buyer', _('Buyer')
+        SELLER = 'seller', _('Seller')
 
     email = models.EmailField(
         _('email address'),
@@ -46,3 +49,13 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    # Convenience methods for role checks
+    def is_buyer(self):
+        return self.role == self.Roles.BUYER
+
+    def is_seller(self):
+        return self.role == self.Roles.SELLER
+
+    def is_admin(self):
+        return self.role == self.Roles.ADMIN
