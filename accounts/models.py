@@ -2,17 +2,14 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-
 class User(AbstractUser):
     """
     Custom User model extending Django's AbstractUser.
-    Uses email as the unique identifier and adds extra profile fields.
+    Adds email as a unique identifier, role, and extra profile fields.
     """
-
-    ROLE_CHOICES = (
-        ('buyer', 'Buyer'),
-        ('seller', 'Seller'),
-    )
+    class Roles(models.TextChoices):
+        ADMIN = 'admin', _('Admin')
+        BUYER = 'buyer', _('Buyer')
 
     email = models.EmailField(
         _('email address'),
@@ -34,18 +31,18 @@ class User(AbstractUser):
         null=True,
         help_text='Profile picture.'
     )
-
-    # Role field for access control (Buyer or Seller)
     role = models.CharField(
         max_length=10,
-        choices=ROLE_CHOICES,
-        default='buyer',
-        help_text='Select Buyer or Seller during registration.'
+        choices=Roles.choices,
+        default=Roles.BUYER,
+        help_text='Role of the user.'
     )
 
-    # Use email as the primary login field
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']  # username is still required for admin compatibility
+    # first_name, last_name, username, and password are inherited from AbstractUser
+
+    # Use email as the primary login field (optional, keep username too)
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
 
     def __str__(self):
-        return f"{self.email} ({self.role})"
+        return self.username
