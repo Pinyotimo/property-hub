@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .btn-gradient {
+    background: linear-gradient(90deg, #ff8a00, #e52e71);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 0.4rem 1.2rem;
+    transition: transform 0.2s ease;
+  }
+  .btn-gradient:hover {
+    transform: scale(1.05);
+  }
+  .message-card {
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #f8f9fa;
+  }
+  .reply-box textarea {
+    border-radius: 8px;
+    resize: none;
+  }
+  .reply-box button {
+    border-radius: 20px;
+  }
+</style>
+
+<div class="container mt-4">
+  <h2 class="mb-4">Reply to Message about {{ property.title }}</h2>
+
+  <!-- Original message -->
+  <div class="message-card">
+    <strong>{{ message.sender.username }}</strong>: {{ message.message }}<br>
+    <small class="text-muted">{{ message.timestamp }}</small>
+    {% if message.reply %}
+      <div class="mt-2 border-start ps-3">
+        <strong>Existing Reply:</strong> {{ message.reply }}<br>
+        <small class="text-muted">by {{ message.replied_by.username }} at {{ message.reply_timestamp }}</small>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Reply form -->
+  <form method="post" class="reply-box">
+    {% csrf_token %}
+    <textarea name="reply" rows="3" class="form-control mb-3" placeholder="Write your reply..." required></textarea>
+    <button type="submit" class="btn btn-gradient">Send Reply</button>
+  </form>
+
+  <!-- Back link -->
+  <a href="{% url 'view_messages' property.pk %}" class="btn btn-link mt-3">← Back to Messages</a>
+</div>
+{% endblock %}

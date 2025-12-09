@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 class User(AbstractUser):
     """
     Custom User model extending Django's AbstractUser.
-    Adds email as a unique identifier, role, and extra profile fields.
+    Uses email as the unique identifier and adds role + profile fields.
     """
 
     class Roles(models.TextChoices):
@@ -17,45 +17,47 @@ class User(AbstractUser):
     email = models.EmailField(
         _('email address'),
         unique=True,
-        help_text='Required. Unique email address.'
+        help_text=_('Required. Unique email address.')
     )
     phone = models.CharField(
         max_length=15,
         blank=True,
-        help_text='Contact phone number.'
+        help_text=_('Contact phone number.')
     )
     bio = models.TextField(
         blank=True,
-        help_text='Short bio for the profile.'
+        help_text=_('Short bio for the profile.')
     )
     profile_picture = models.ImageField(
         upload_to='profiles/',
         blank=True,
         null=True,
-        help_text='Profile picture.'
+        help_text=_('Profile picture.')
     )
     role = models.CharField(
         max_length=10,
         choices=Roles.choices,
         default=Roles.BUYER,
-        help_text='Role of the user.'
+        help_text=_('Role of the user.')
     )
 
-    # first_name, last_name, username, and password are inherited from AbstractUser
-
-    # Use email as the primary login field (optional, keep username too)
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
+    # Use email as the primary login field
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     def __str__(self):
-        return self.username
+        # Prefer showing email if username is blank
+        return self.username if self.username else self.email
 
-    # Convenience methods for role checks
+    # ✅ Convenience properties for role checks
+    @property
     def is_buyer(self):
         return self.role == self.Roles.BUYER
 
+    @property
     def is_seller(self):
         return self.role == self.Roles.SELLER
 
+    @property
     def is_admin(self):
-        return self.role == self.Roles.ADMIN
+        return self.role == self.Roles.ADMIN or self.is_superuser

@@ -6,30 +6,20 @@
   .page-bg {
     min-height: 100vh;
     background: url("{% static 'images/pexels-mahmoud-zakariya-2154822140-34975232 (2).jpg' %}") center center no-repeat;
-    background-size: cover;          /* fills viewport proportionally */
-    background-attachment: fixed;    /* keeps image stable on scroll */
-  }
-
-  /* Prevent over-scaling on very large screens */
-  @media (min-width: 1600px) {
-    .page-bg {
-      background-size: contain;
-      background-position: top center;
-    }
+    background-size: cover;
+    background-attachment: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .overlay {
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background-color: rgba(255, 255, 255, 0.7); /* stronger overlay for readability */
+    background: rgba(255, 255, 255, 0.6); /* softer warm overlay */
+    backdrop-filter: blur(4px);
     z-index: 0;
-  }
-
-  @media (max-width: 768px) {
-    .overlay {
-      background-color: rgba(255, 255, 255, 0.5); /* lighter overlay for mobile */
-    }
   }
 
   .container {
@@ -38,17 +28,19 @@
   }
 
   .card {
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px); /* glassmorphism effect */
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    overflow: hidden;
   }
 
   .card-header {
-    background: linear-gradient(135deg, #007bff, #00c6ff);
-    font-weight: 600;
+    background: linear-gradient(135deg, #ff9966, #ff5e62); /* warm gradient */
+    font-weight: 700;
     letter-spacing: 0.5px;
     color: #fff;
+    padding: 1rem;
   }
 
   .card-body {
@@ -56,15 +48,16 @@
   }
 
   .rounded-circle {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     object-fit: cover;
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
+    border: 3px solid #ff9966;
   }
   @media (min-width: 992px) {
     .rounded-circle {
-      width: 100px;
-      height: 100px;
+      width: 110px;
+      height: 110px;
     }
   }
 
@@ -72,32 +65,33 @@
     background-color: transparent;
     border-bottom: 1px solid rgba(0,0,0,0.1);
     font-size: 0.95rem;
+    padding: 0.75rem 0;
   }
   .list-group-item:last-child {
     border-bottom: none;
   }
 
   .btn-custom {
-    min-width: 140px;
-    font-weight: 500;
+    min-width: 150px;
+    font-weight: 600;
+    border-radius: 30px;
     transition: all 0.3s ease;
   }
-
   .btn-custom:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.2);
     opacity: 0.95;
   }
 </style>
 
 <div class="page-bg">
   <div class="overlay"></div>
-  <div class="container mt-5">
+  <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-6 col-md-8 col-sm-10">
-        <div class="card border-0 rounded">
+        <div class="card border-0">
           <div class="card-header text-center">
-            <h2 class="mb-0">User Profile</h2>
+            <h2 class="mb-0">👤 User Profile</h2>
           </div>
           <div class="card-body">
 
@@ -111,31 +105,31 @@
               <!-- Authenticated user section -->
               <div class="d-flex align-items-center mb-4 border-bottom pb-3">
                 <img src="{% if request.user.profile_picture %}{{ request.user.profile_picture.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}"
-                     class="rounded-circle me-3 border border-3 border-primary"
+                     class="rounded-circle me-3"
                      alt="User Avatar">
                 <div>
-                  <h4 class="card-title mb-1">{{ request.user.username }}</h4>
+                  <h4 class="card-title mb-1 text-dark">{{ request.user.username }}</h4>
                   <p class="text-muted mb-0">{{ request.user.email }}</p>
                 </div>
               </div>
 
               <ul class="list-group list-group-flush mb-3">
                 <li class="list-group-item">
-                  <strong>Member since:</strong> {{ request.user.date_joined|date:"F j, Y" }}
+                  <strong>📅 Member since:</strong> {{ request.user.date_joined|date:"F j, Y" }}
                 </li>
                 <li class="list-group-item">
-                  <strong>Last login:</strong> {{ request.user.last_login|date:"F j, Y, g:i a" }}
+                  <strong>⏰ Last login:</strong> {{ request.user.last_login|date:"F j, Y, g:i a" }}
                 </li>
               </ul>
 
               <div class="mt-4 text-center">
-                <a href="{% url 'profile_edit' %}" class="btn btn-outline-primary btn-custom me-2">Edit Profile</a>
-                <a href="{% url 'password_change' %}" class="btn btn-warning btn-custom me-2">Change Password</a>
+                <a href="{% url 'profile_edit' %}" class="btn btn-outline-primary btn-custom me-2">✏️ Edit Profile</a>
+                <a href="{% url 'password_change' %}" class="btn btn-warning btn-custom me-2">🔑 Change Password</a>
                 <form method="post" action="{% url 'logout' %}" class="d-inline">
                   {% csrf_token %}
                   <button type="submit" class="btn btn-danger btn-custom"
                           onclick="return confirm('Are you sure you want to logout?')">
-                    Logout
+                    🚪 Logout
                   </button>
                 </form>
               </div>

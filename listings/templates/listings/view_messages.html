@@ -1,7 +1,50 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+  .btn-gradient {
+    background: linear-gradient(90deg, #ff8a00, #e52e71);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 0.3rem 1rem;
+    transition: transform 0.2s ease;
+  }
+  .btn-gradient:hover {
+    transform: scale(1.05);
+  }
+  .list-group-item {
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  .reply-box {
+    margin-top: 10px;
+  }
+  .reply-box textarea {
+    border-radius: 8px;
+    resize: none;
+  }
+  .reply-box button {
+    border-radius: 20px;
+  }
+  .disclaimer {
+    background: #fff3cd;
+    border: 1px solid #ffeeba;
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    color: #856404;
+    font-size: 0.9rem;
+  }
+</style>
+
 <div class="container mt-4">
-  <h2>Messages about {{ property.title }}</h2>
+  <h2 class="mb-4">Messages about {{ property.title }}</h2>
+
+  {% if show_disclaimer %}
+    <div class="disclaimer">
+      ⚠️ <strong>Disclaimer:</strong> Never pay before viewing the house in person.
+    </div>
+  {% endif %}
 
   {% if messages %}
     <ul class="list-group">
@@ -15,24 +58,24 @@
               <strong>Reply:</strong> {{ msg.reply }}<br>
               <small class="text-muted">by {{ msg.replied_by.username }} at {{ msg.reply_timestamp }}</small>
             </div>
-          {% elif request.user == property.owner %}
-            <form method="post" class="mt-2">
+          {% elif can_reply %}
+            <form method="post" class="reply-box">
               {% csrf_token %}
               <input type="hidden" name="message_id" value="{{ msg.id }}">
-              <textarea name="reply" rows="2" class="form-control" placeholder="Reply..."></textarea>
-              <button type="submit" class="btn btn-sm btn-primary mt-1">Send Reply</button>
+              <textarea name="reply" rows="2" class="form-control mb-2" placeholder="Write a reply..."></textarea>
+              <button type="submit" class="btn btn-sm btn-gradient">Send Reply</button>
             </form>
           {% else %}
             <div class="mt-2 text-warning">
-              <strong>Owner is currently unavailable.</strong><br>
-              Contact them directly at: {{ property.owner.email }}
+              <strong>Reply unavailable.</strong><br>
+              Contact owner directly at: {{ property.owner.email }}
             </div>
           {% endif %}
         </li>
       {% endfor %}
     </ul>
   {% else %}
-    <p>No messages yet for this property.</p>
+    <p class="text-muted">No messages yet for this property.</p>
   {% endif %}
 
   <a href="{% url 'property_detail' property.pk %}" class="btn btn-link mt-3">← Back to Property</a>

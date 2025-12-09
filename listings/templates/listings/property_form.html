@@ -4,42 +4,184 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #fbc2eb, #f6d365); /* warm gradient */
+  }
+  .form-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    padding: 2rem;
+  }
+  .form-card h2 {
+    font-weight: 700;
+    color: #d35400; /* warm accent */
+  }
+  .form-section-title {
+    font-weight: 600;
+    color: #e67e22;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .form-control, .form-check-input {
+    border-radius: 10px;
+    padding: 0.6rem;
+  }
+  .btn-gradient {
+    background: linear-gradient(90deg, #ff9966, #ff5e62);
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    transition: box-shadow 0.3s ease;
+  }
+  .btn-gradient:hover {
+    box-shadow: 0 0 12px rgba(255, 94, 98, 0.6);
+  }
+</style>
+
+<div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-8">
-      <h2 class="mb-3">{{ title }}</h2>
-      <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
+      <div class="form-card">
+        <h2 class="mb-4 text-center">{{ title }}</h2>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
 
-        <div class="mb-3">
-          {{ form.title.label_tag }}
-          {{ form.title|add_class:"form-control" }}
-        </div>
+          <!-- Title -->
+          <div class="mb-3">
+            {{ form.title.label_tag }}
+            {{ form.title|add_class:"form-control" }}
+            {{ form.title.errors }}
+          </div>
 
-        <div class="mb-3">
-          {{ form.location.label_tag }}
-          {{ form.location|add_class:"form-control" }}
-        </div>
+          <!-- Description -->
+          <div class="mb-3">
+            {{ form.description.label_tag }}
+            {{ form.description|add_class:"form-control" }}
+            {{ form.description.errors }}
+          </div>
 
-        <div class="mb-3">
-          {{ form.price.label_tag }}
-          {{ form.price|add_class:"form-control" }}
-        </div>
+          <!-- Price -->
+          <div class="mb-3">
+            {{ form.price.label_tag }}
+            {{ form.price|add_class:"form-control" }}
+            {{ form.price.errors }}
+          </div>
 
-        <div class="mb-3">
-          {{ form.property_type.label_tag }}
-          {{ form.property_type|add_class:"form-control" }}
-        </div>
+          <!-- Location Section -->
+           <div class="mb-3">
+            {{ form.location.label_tag }}
+            {{ form.location|add_class:"form-control" }}
+            {{ form.location.errors }}
+          </div>
+          <div class="mb-3">
+            {{ form.address.label_tag }}
+            {{ form.address|add_class:"form-control" }}
+            {{ form.address.errors }}
+          </div>
+          <div class="mb-3">
+            {{ form.city.label_tag }}
+            {{ form.city|add_class:"form-control" }}
+            {{ form.city.errors }}
+          </div>
+          <div class="mb-3">
+            {{ form.state.label_tag }}
+            {{ form.state|add_class:"form-control" }}
+            {{ form.state.errors }}
+          </div>
+          <div class="mb-3">
+            {{ form.zip_code.label_tag }}
+            {{ form.zip_code|add_class:"form-control" }}
+            {{ form.zip_code.errors }}
+          </div>
 
-        <div class="mb-3">
-          {{ form.image.label_tag }}
-          {{ form.image|add_class:"form-control" }}
-        </div>
+          <!-- Property Type -->
+          <div class="mb-3">
+            {{ form.property_type.label_tag }}
+            {{ form.property_type|add_class:"form-control" }}
+            {{ form.property_type.errors }}
+          </div>
 
-        <button type="submit" class="btn btn-success">Save</button>
-        <a href="{% url 'property_list' %}" class="btn btn-secondary">Cancel</a>
-      </form>
+          <!-- Listing Type -->
+          <div class="mb-3">
+            {{ form.listing_type.label_tag }}
+            {{ form.listing_type|add_class:"form-control" }}
+            {{ form.listing_type.errors }}
+          </div>
+
+          <!-- Bedrooms -->
+          <div class="mb-3">
+            {{ form.bedrooms.label_tag }}
+            {{ form.bedrooms|add_class:"form-control" }}
+            {{ form.bedrooms.errors }}
+          </div>
+
+          <!-- Bathrooms -->
+          <div class="mb-3">
+            {{ form.bathrooms.label_tag }}
+            {{ form.bathrooms|add_class:"form-control" }}
+            {{ form.bathrooms.errors }}
+          </div>
+
+          <!-- Square Feet -->
+          <div class="mb-3">
+            {{ form.square_feet.label_tag }}
+            {{ form.square_feet|add_class:"form-control" }}
+            {{ form.square_feet.errors }}
+          </div>
+
+          <!-- Features -->
+          <h5 class="form-section-title">✨ Features</h5>
+          <div class="form-check mb-2">
+            {{ form.has_parking|add_class:"form-check-input" }}
+            {{ form.has_parking.label_tag }}
+          </div>
+          <div class="form-check mb-2">
+            {{ form.has_pool|add_class:"form-check-input" }}
+            {{ form.has_pool.label_tag }}
+          </div>
+          <div class="form-check mb-2">
+            {{ form.has_gym|add_class:"form-check-input" }}
+            {{ form.has_gym.label_tag }}
+          </div>
+          <div class="form-check mb-2">
+            {{ form.has_garden|add_class:"form-check-input" }}
+            {{ form.has_garden.label_tag }}
+          </div>
+
+          <!-- Status -->
+          <div class="mb-3">
+            {{ form.status.label_tag }}
+            {{ form.status|add_class:"form-control" }}
+            {{ form.status.errors }}
+          </div>
+
+          <!-- Featured -->
+          <div class="form-check mb-3">
+            {{ form.is_featured|add_class:"form-check-input" }}
+            {{ form.is_featured.label_tag }}
+          </div>
+
+          <!-- Image -->
+          <div class="mb-3">
+            {{ form.image.label_tag }}
+            {{ form.image|add_class:"form-control" }}
+            {{ form.image.errors }}
+          </div>
+
+          <!-- Buttons -->
+          <div class="d-flex justify-content-between mt-4">
+            <button type="submit" class="btn btn-gradient">💾 Save Property</button>
+            <a href="{% url 'property_list' %}" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>

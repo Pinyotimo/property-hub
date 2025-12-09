@@ -38,7 +38,7 @@ class Property(models.Model):
     slug = models.SlugField(unique=True, blank=True)
     description = models.TextField()
     price = models.DecimalField(max_digits=12, decimal_places=2)
-    
+    location = models.CharField(max_length=200, blank=True, null=True)
     # Location
     address = models.CharField(max_length=255)
     city = models.CharField(max_length=100)

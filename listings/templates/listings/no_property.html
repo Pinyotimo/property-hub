@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center vh-100"
+     style="background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);">
+
+  <div class="card text-center shadow-lg p-5"
+       style="background-color: rgba(255, 255, 255, 0.85); border-radius: 20px; max-width: 600px;">
+
+    <h2 class="fw-bold text-dark mb-3">No Properties Available</h2>
+    <p class="text-muted mb-4">
+      There are currently no properties listed. Please check back later.
+    </p>
+
+    {% if user.is_authenticated and user.is_seller %}
+      <a href="{% url 'property_create' %}"
+         class="btn btn-lg px-4 py-2 fw-semibold"
+         style="background: linear-gradient(90deg, #ff8a00, #e52e71); color: #fff; border: none; border-radius: 30px;">
+        ➕ Add Your First Property
+      </a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

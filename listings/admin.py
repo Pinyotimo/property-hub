@@ -1,35 +1,44 @@
 from django.contrib import admin
-from .models import Property
+from django.utils.html import format_html
+from .models import Property, PropertyImage, Message
 
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
     list_display = (
         'title', 'location', 'formatted_price',
-        'bedrooms', 'bathrooms',
-        'property_type', 'listed_date',
-        'owner', 'image_preview', 'choose_image_link'
+        'bedrooms', 'bathrooms', 'property_type',
+        'status_badge', 'is_featured', 'listed_date', 'owner'
     )
     search_fields = ('title', 'location', 'owner__username')
-    list_filter = ('property_type', 'bedrooms', 'bathrooms')
+    list_filter = ('status', 'property_type', 'is_featured')
     ordering = ('-listed_date', 'price')
-    readonly_fields = ('listed_date', 'image_preview')
+    readonly_fields = ('listed_date',)
 
     def formatted_price(self, obj):
-        return f"${obj.price:,.2f}"
+        return f"KES {obj.price:,.2f}"
     formatted_price.short_description = "Price"
 
-    def image_preview(self, obj):
-        if obj.image:
-            return f'<img src="{obj.image.url}" style="max-height:100px; max-width:150px;" />'
-        return "No Image"
-    image_preview.short_description = "Preview"
+    def status_badge(self, obj):
+        color_map = {
+            'available': 'green',
+            'sold': 'red',
+            'rented': 'orange',
+            'pending': 'gray',
+        }
+        color = color_map.get(obj.status, 'black')
+        return format_html(
+            '<span style="color:{}; font-weight:bold;">{}</span>',
+            color,
+            obj.get_status_display()
+        )
+    status_badge.short_description = 'Status'
 
-    def choose_image_link(self, obj):
-        """Show a link in the admin change list to open the frontend chooser."""
-        from django.utils.html import format_html
-        if obj.pk:
-            url = f"/listings/property/{obj.pk}/choose-image/"
-            return format_html('<a class="button" href="{}" target="_blank">Choose Image</a>', url)
-        return '-'
-    choose_image_link.short_description = 'Choose Image'
-    image_preview.short_description = "Preview"
+@admin.register(PropertyImage)
+class PropertyImageAdmin(admin.ModelAdmin):
+    list_display = ('property', 'is_primary', 'uploaded_at')
+    list_filter = ('is_primary',)
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('property', 'sender', 'receiver', 'timestamp')
+    search_fields = ('message',)
