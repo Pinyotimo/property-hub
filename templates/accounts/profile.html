@@ -2,159 +2,44 @@
 {% load static %}
 
 {% block content %}
-<style>
-  .page-bg {
-    min-height: 100vh;
-    background: url("{% static '' %}") center center no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
-
-  .overlay {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(255, 255, 255, 0.55); /* softer overlay */
-    backdrop-filter: blur(6px);
-    z-index: 0;
-  }
-
-  .container {
-    position: relative;
-    z-index: 1;
-  }
-
-  .card {
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(14px);
-    box-shadow: 0 12px 28px rgba(0,0,0,0.15);
-    overflow: hidden;
-    transition: transform 0.3s ease;
-  }
-  .card:hover {
-    transform: translateY(-4px);
-  }
-
-  .card-header {
-    background: linear-gradient(135deg, #ff9966, #ff5e62);
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    color: #fff;
-    padding: 1.2rem;
-    text-transform: uppercase;
-  }
-
-  .card-body {
-    padding: 2rem;
-  }
-
-  .rounded-circle {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    object-fit: cover;
-    width: 95px;
-    height: 95px;
-    border: 3px solid #ff9966;
-    transition: transform 0.3s ease;
-  }
-  .rounded-circle:hover {
-    transform: scale(1.05);
-  }
-  @media (min-width: 992px) {
-    .rounded-circle {
-      width: 120px;
-      height: 120px;
-    }
-  }
-
-  .list-group-item {
-    background-color: transparent;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
-    font-size: 1rem;
-    padding: 0.85rem 0;
-  }
-  .list-group-item:last-child {
-    border-bottom: none;
-  }
-
-  .btn-custom {
-    min-width: 160px;
-    font-weight: 600;
-    border-radius: 30px;
-    transition: all 0.3s ease;
-    padding: 0.6rem 1.2rem;
-  }
-  .btn-custom:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
-    opacity: 0.95;
-  }
-</style>
-
-<div class="page-bg">
-  <div class="overlay"></div>
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-6 col-md-8 col-sm-10">
-        <div class="card border-0">
-          <div class="card-header text-center">
-            <h2 class="mb-0">👤 User Profile</h2>
+<div class="py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="app-card profile-card">
+        <div class="d-flex flex-wrap align-items-center gap-4">
+          {% if request.user.profile_picture %}
+            <img src="{{ request.user.profile_picture.url }}" class="profile-avatar rounded-circle" alt="{{ request.user.username }}">
+          {% else %}
+            <div class="profile-avatar profile-initial rounded-circle">{{ request.user.username|first|upper }}</div>
+          {% endif %}
+          <div>
+            <p class="eyebrow">{{ request.user.role|title }} account</p>
+            <h1 class="h3 mb-1">{{ request.user.get_full_name|default:request.user.username }}</h1>
+            <p class="text-muted mb-0">{{ request.user.email }}</p>
           </div>
-          <div class="card-body">
+        </div>
 
-            {% if messages %}
-              {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
-              {% endfor %}
-            {% endif %}
+        <dl class="details-list mt-4">
+          <div><dt>Username</dt><dd>{{ request.user.username }}</dd></div>
+          <div><dt>Phone</dt><dd>{{ request.user.phone|default:"Not provided" }}</dd></div>
+          <div><dt>Member Since</dt><dd>{{ request.user.date_joined|date:"F j, Y" }}</dd></div>
+          <div><dt>Last Login</dt><dd>{{ request.user.last_login|date:"F j, Y, g:i a"|default:"Not available" }}</dd></div>
+        </dl>
 
-            {% if request.user.is_authenticated %}
-              <!-- Authenticated user section -->
-              <div class="d-flex align-items-center mb-4 border-bottom pb-3">
-                <img src="{% if request.user.profile_picture %}{{ request.user.profile_picture.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}"
-                     class="rounded-circle me-3"
-                     alt="User Avatar">
-                <div>
-                  <h4 class="card-title mb-1 text-dark">{{ request.user.username }}</h4>
-                  <p class="text-muted mb-0">{{ request.user.email }}</p>
-                </div>
-              </div>
-
-              <ul class="list-group list-group-flush mb-3">
-                <li class="list-group-item">
-                  <strong>📅 Member since:</strong> {{ request.user.date_joined|date:"F j, Y" }}
-                </li>
-                <li class="list-group-item">
-                  <strong>⏰ Last login:</strong> {{ request.user.last_login|date:"F j, Y, g:i a" }}
-                </li>
-              </ul>
-
-              <div class="mt-4 text-center">
-                <a href="{% url 'profile_edit' %}" class="btn btn-outline-primary btn-custom me-2">✏️ Edit Profile</a>
-                <a href="{% url 'password_change' %}" class="btn btn-warning btn-custom me-2">🔑 Change Password</a>
-                <form method="post" action="{% url 'logout' %}" class="d-inline">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-danger btn-custom"
-                          onclick="return confirm('Are you sure you want to logout?')">
-                    🚪 Logout
-                  </button>
-                </form>
-              </div>
-
-            {% else %}
-              <!-- Guest / login section -->
-              <p class="text-center">You are not logged in.</p>
-              <div class="text-center mt-3">
-                <a href="{% url 'login' %}" class="btn btn-primary btn-custom me-2">Login</a>
-                <a href="{% url 'register' %}" class="btn btn-outline-secondary btn-custom">Sign Up</a>
-              </div>
-            {% endif %}
-
+        {% if request.user.bio %}
+          <div class="mt-4">
+            <h2 class="h5">About</h2>
+            <p class="text-muted mb-0">{{ request.user.bio }}</p>
           </div>
+        {% endif %}
+
+        <div class="d-flex flex-wrap gap-2 mt-4">
+          <a href="{% url 'profile_edit' %}" class="btn btn-primary">Edit Profile</a>
+          <a href="{% url 'password_change' %}" class="btn btn-outline-secondary">Change Password</a>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger">Log Out</button>
+          </form>
         </div>
       </div>
     </div>

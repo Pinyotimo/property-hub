@@ -1,83 +1,83 @@
 {% extends "base.html" %}
-{% block content %}
-<style>
-  .btn-gradient {
-    background: linear-gradient(90deg, #ff8a00, #e52e71);
-    color: #fff;
-    border: none;
-    border-radius: 20px;
-    padding: 0.3rem 1rem;
-    transition: transform 0.2s ease;
-  }
-  .btn-gradient:hover {
-    transform: scale(1.05);
-  }
-  .list-group-item {
-    border-radius: 8px;
-    margin-bottom: 10px;
-  }
-  .reply-box {
-    margin-top: 10px;
-  }
-  .reply-box textarea {
-    border-radius: 8px;
-    resize: none;
-  }
-  .reply-box button {
-    border-radius: 20px;
-  }
-  .disclaimer {
-    background: #fff3cd;
-    border: 1px solid #ffeeba;
-    border-radius: 8px;
-    padding: 0.75rem;
-    margin-bottom: 1rem;
-    color: #856404;
-    font-size: 0.9rem;
-  }
-</style>
+{% block title %}Messages - Property Hub{% endblock %}
 
-<div class="container mt-4">
-  <h2 class="mb-4">Messages about {{ property.title }}</h2>
+{% block content %}
+<div class="py-5">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Conversation</p>
+      <h1>Messages for {{ property.title }}</h1>
+    </div>
+    <a href="{% url 'property_detail' property.pk %}" class="btn btn-outline-secondary">Back to Property</a>
+  </div>
 
   {% if show_disclaimer %}
     <div class="disclaimer">
-      ⚠️ <strong>Disclaimer:</strong> Never pay before viewing the house in person.
+      Never send money before viewing a property and confirming the owner or agent details.
     </div>
   {% endif %}
 
-  {% if messages %}
-    <ul class="list-group">
-      {% for msg in messages %}
-        <li class="list-group-item">
-          <strong>{{ msg.sender.username }}</strong>: {{ msg.message }}<br>
-          <small class="text-muted">{{ msg.timestamp }}</small>
+  {% if conversation_messages %}
+    <div class="chat-shell app-card">
+      <div class="chat-header">
+        <div>
+          <h2 class="h5 mb-1">Customer conversation</h2>
+          <p class="text-muted mb-0">
+            {% if is_owner_or_admin %}
+              Reply to customer enquiries and keep the property discussion in one place.
+            {% else %}
+              Messages here are shared with the property team.
+            {% endif %}
+          </p>
+        </div>
+        <span class="status-pill status-{{ property.status }}">{{ property.get_status_display }}</span>
+      </div>
+
+      <div class="chat-thread">
+      {% for msg in conversation_messages %}
+        <article class="chat-message {% if msg.sender == request.user %}chat-message-own{% endif %}">
+          <div class="chat-bubble">
+            <div class="chat-meta">
+              <strong>
+                {% if msg.sender == request.user %}
+                  You
+                {% else %}
+                  {{ msg.sender.get_full_name|default:msg.sender.username }}
+                {% endif %}
+              </strong>
+              <small>{{ msg.timestamp|date:"M j, g:i a" }}</small>
+            </div>
+            <p>{{ msg.message }}</p>
+          </div>
 
           {% if msg.reply %}
-            <div class="mt-2 border-start ps-3">
-              <strong>Reply:</strong> {{ msg.reply }}<br>
-              <small class="text-muted">by {{ msg.replied_by.username }} at {{ msg.reply_timestamp }}</small>
-            </div>
-          {% elif can_reply %}
-            <form method="post" class="reply-box">
-              {% csrf_token %}
-              <input type="hidden" name="message_id" value="{{ msg.id }}">
-              <textarea name="reply" rows="2" class="form-control mb-2" placeholder="Write a reply..."></textarea>
-              <button type="submit" class="btn btn-sm btn-gradient">Send Reply</button>
-            </form>
-          {% else %}
-            <div class="mt-2 text-warning">
-              <strong>Reply unavailable.</strong><br>
-              Contact owner directly at: {{ property.owner.email }}
+            <div class="chat-bubble chat-reply">
+              <div class="chat-meta">
+                <strong>{{ msg.replied_by.get_full_name|default:msg.replied_by.username }}</strong>
+                <small>{{ msg.reply_timestamp|date:"M j, g:i a" }}</small>
+              </div>
+              <p>{{ msg.reply }}</p>
             </div>
           {% endif %}
-        </li>
+        </article>
       {% endfor %}
-    </ul>
-  {% else %}
-    <p class="text-muted">No messages yet for this property.</p>
-  {% endif %}
+      </div>
 
-  <a href="{% url 'property_detail' property.pk %}" class="btn btn-link mt-3">← Back to Property</a>
+      {% if can_reply %}
+        <form method="post" class="chat-composer">
+          {% csrf_token %}
+          <label for="message" class="visually-hidden">Message</label>
+          <textarea id="message" name="message" rows="3" class="form-control" placeholder="Write a message..." required></textarea>
+          <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="app-card text-center">
+      <p class="eyebrow">No messages</p>
+      <h2 class="h4">No customer conversation yet</h2>
+      <p class="text-muted mb-0">Messages about this property will appear here once a customer reaches out.</p>
+    </div>
+  {% endif %}
 </div>
 {% endblock %}

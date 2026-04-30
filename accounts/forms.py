@@ -5,6 +5,13 @@ from .models import User
 
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
+    role = forms.ChoiceField(
+        choices=[
+            (User.Roles.BUYER, "Buyer"),
+            (User.Roles.SELLER, "Seller"),
+        ],
+        help_text="Choose how you plan to use Property Hub.",
+    )
 
     class Meta:
         model = User
@@ -27,5 +34,4 @@ class UserUpdateForm(forms.ModelForm):
             'phone',
             'bio',
             'profile_picture',
-            'role',  # allow updating role if needed
         )

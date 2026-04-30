@@ -6,6 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from .forms import UserRegistrationForm, UserUpdateForm
 
 
+@login_required
 def profile(request):
     """User profile page (requires login)."""
     return render(request, "accounts/profile.html")
@@ -21,7 +22,7 @@ def register(request):
             auth_login(request, user)
             messages.success(
                 request,
-                f"Account created successfully as {user.role.capitalize()}! Welcome, {user.username}."
+                f"Welcome to Property Hub, {user.username}. Your {user.role} account is ready."
             )
             return redirect("profile")
     else:
@@ -36,7 +37,7 @@ def edit_profile(request):
         form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            messages.success(request, "Your profile has been updated successfully!")
+            messages.success(request, "Your profile has been updated.")
             return redirect("profile")
     else:
         form = UserUpdateForm(instance=request.user)
@@ -50,7 +51,7 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
-            messages.success(request, f"Welcome back, {user.username} ({user.role.capitalize()})!")
+            messages.success(request, f"Welcome back, {user.username}.")
             return redirect("profile")
     else:
         form = AuthenticationForm()
@@ -59,5 +60,5 @@ def login_view(request):
 
 def logout_confirmation(request):
     """Logout confirmation view."""
-    messages.info(request, "You’ve been logged out successfully.")
+    messages.info(request, "You have been logged out.")
     return render(request, "accounts/logout_confirmation.html")
