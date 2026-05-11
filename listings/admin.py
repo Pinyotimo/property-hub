@@ -35,8 +35,8 @@ class PropertyAdmin(admin.ModelAdmin):
 
 @admin.register(PropertyImage)
 class PropertyImageAdmin(admin.ModelAdmin):
-    list_display = ('property', 'is_primary', 'uploaded_at')
-    list_filter = ('is_primary',)
+    list_display = ('property', 'media_type', 'is_primary', 'uploaded_at')
+    list_filter = ('media_type', 'is_primary')
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):

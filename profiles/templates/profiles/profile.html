@@ -5,16 +5,38 @@
 {% block content %}
 <div class="profile-container">
     <!-- Profile Header -->
-    <div class="profile-header bg-primary text-white py-5">
+    <div class="profile-header py-5">
         <div class="container">
-            <div class="row align-items-center">
+            <div class="row align-items-center gy-4">
                 <div class="col-md-3 text-center">
-                    <img src="https://via.placeholder.com/150" class="profile-avatar rounded-circle border border-3 border-white shadow" alt="Profile Picture">
+                    {% if profile.avatar %}
+                        <img src="{{ profile.avatar.url }}" class="profile-avatar rounded-circle border border-4 border-white shadow" alt="{{ profile.user.username }}">
+                    {% else %}
+                        <div class="profile-avatar profile-initial rounded-circle">{{ profile.user.username|first|upper }}</div>
+                    {% endif %}
                 </div>
-                <div class="col-md-9">
-                    <h1 class="display-4 fw-bold">{{ profile.user.username }}</h1>
-                    <p class="lead mb-2">{{ profile.user.email }}</p>
-                    <span class="badge bg-light text-primary fs-6 px-3 py-2">Member since {{ profile.user.date_joined|date:"F j, Y" }}</span>
+                <div class="col-md-6">
+                    <h1 class="display-5 fw-bold mb-2">{{ profile.user.get_full_name|default:profile.user.username }}</h1>
+                    <p class="lead text-white-75 mb-2">{{ profile.user.email }}</p>
+                    <div class="profile-meta d-flex flex-column flex-sm-row gap-2 align-items-start align-items-sm-center">
+                        <span class="badge bg-white text-primary fs-7 px-3 py-2">Member since {{ profile.user.date_joined|date:"F j, Y" }}</span>
+                        {% if profile.location %}
+                            <span class="badge bg-white text-primary fs-7 px-3 py-2"><i class="fas fa-map-marker-alt me-1"></i>{{ profile.location }}</span>
+                        {% endif %}
+                        {% if profile.phone %}
+                            <span class="badge bg-white text-primary fs-7 px-3 py-2"><i class="fas fa-phone-alt me-1"></i>{{ profile.phone }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-3 text-center text-md-end">
+                    <a href="{% url 'edit_profile' %}" class="btn btn-light btn-sm mb-2 w-100 w-md-auto">
+                        <i class="fas fa-edit me-1"></i>Edit Profile
+                    </a>
+                    {% if profile.user.is_seller or profile.user.is_admin %}
+                        <a href="{% url 'property_create' %}" class="btn btn-outline-light btn-sm w-100 w-md-auto">
+                            <i class="fas fa-plus me-1"></i>Add Property
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -25,44 +47,70 @@
         <div class="row">
             <!-- Profile Stats -->
             <div class="col-md-4 mb-4">
-                <div class="card profile-stats-card border-0 shadow-sm">
-                    <div class="card-body text-center">
-                        <div class="stat-number display-4 text-primary fw-bold">{{ my_properties|length }}</div>
-                        <div class="stat-label text-muted">Properties Listed</div>
+                    <div class="card profile-stats-card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="stat-number display-4 text-primary fw-bold">{{ my_properties|length }}</div>
+                            <div class="stat-label text-muted">Active Listings</div>
+                        </div>
+                    </div>
+
+                    <div class="card profile-info-card border-0 shadow-sm mt-3">
+                        <div class="card-header bg-white border-0">
+                            <h5 class="mb-0"><i class="fas fa-user-circle me-2 text-primary"></i>Profile Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-row mb-3">
+                                <span class="info-label">Username</span>
+                                <span class="info-value">{{ profile.user.username }}</span>
+                            </div>
+                            <div class="info-row mb-3">
+                                <span class="info-label">Email</span>
+                                <span class="info-value">{{ profile.user.email }}</span>
+                            </div>
+                            {% if profile.location %}
+                                <div class="info-row mb-3">
+                                    <span class="info-label">Location</span>
+                                    <span class="info-value">{{ profile.location }}</span>
+                                </div>
+                            {% endif %}
+                            {% if profile.phone %}
+                                <div class="info-row mb-3">
+                                    <span class="info-label">Phone</span>
+                                    <span class="info-value">{{ profile.phone }}</span>
+                                </div>
+                            {% endif %}
+                            <div class="info-row mb-4">
+                                <span class="info-label">Joined</span>
+                                <span class="info-value">{{ profile.user.date_joined|date:"F j, Y" }}</span>
+                            </div>
+                            <a href="{% url 'edit_profile' %}" class="btn btn-outline-secondary btn-sm w-100">
+                                <i class="fas fa-edit me-1"></i>Edit Profile
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card profile-bio-card border-0 shadow-sm mt-3">
+                        <div class="card-body">
+                            <h5 class="mb-3 text-primary"><i class="fas fa-feather-alt me-2"></i>About</h5>
+                            <p class="mb-0 text-muted">
+                                {% if profile.bio %}
+                                    {{ profile.bio }}
+                                {% else %}
+                                    Add a short bio so visitors know more about you.
+                                {% endif %}
+                            </p>
+                        </div>
                     </div>
                 </div>
-
-                <div class="card profile-info-card border-0 shadow-sm mt-3">
-                    <div class="card-header bg-white border-0">
-                        <h5 class="mb-0"><i class="fas fa-user-circle me-2 text-primary"></i>Profile Information</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <strong class="text-muted">Username:</strong><br>
-                            {{ profile.user.username }}
-                        </div>
-                        <div class="mb-3">
-                            <strong class="text-muted">Email:</strong><br>
-                            {{ profile.user.email }}
-                        </div>
-                        <div class="mb-3">
-                            <strong class="text-muted">Member Since:</strong><br>
-                            {{ profile.user.date_joined|date:"F j, Y" }}
-                        </div>
-                        <a href="{% url 'edit_profile' %}" class="btn btn-outline-secondary btn-sm w-100">
-                            <i class="fas fa-edit me-1"></i>Edit Profile
-                        </a>
-                    </div>
-                </div>
-            </div>
-
             <!-- My Properties -->
             <div class="col-md-8">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="mb-0"><i class="fas fa-home me-2 text-primary"></i>My Properties</h2>
-                    <a href="{% url 'property_create' %}" class="btn btn-primary">
-                        <i class="fas fa-plus me-1"></i>Add New Property
-                    </a>
+                    {% if profile.user.is_seller or profile.user.is_admin %}
+                        <a href="{% url 'property_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Add New Property
+                        </a>
+                    {% endif %}
                 </div>
 
                 {% if my_properties %}
@@ -121,9 +169,11 @@
                             <i class="fas fa-home fa-4x text-muted mb-3"></i>
                             <h4 class="text-muted">No Properties Yet</h4>
                             <p class="text-muted mb-4">You haven't listed any properties yet. Start by adding your first property!</p>
-                            <a href="{% url 'property_create' %}" class="btn btn-primary btn-lg">
-                                <i class="fas fa-plus me-2"></i>Add Your First Property
-                            </a>
+                            {% if profile.user.is_seller or profile.user.is_admin %}
+                                <a href="{% url 'property_create' %}" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-plus me-2"></i>Add Your First Property
+                                </a>
+                            {% endif %}
                         </div>
                     </div>
                 {% endif %}

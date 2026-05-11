@@ -64,3 +64,53 @@ class MessageAccessTests(TestCase):
 
         self.client.force_login(self.admin)
         self.assertEqual(self.client.get(url).status_code, 200)
+
+
+class PropertyCreateTests(TestCase):
+    def setUp(self):
+        User = get_user_model()
+        self.seller = User.objects.create_user(
+            username="seller",
+            email="seller@example.com",
+            password="test-pass-123",
+            role=User.Roles.SELLER,
+        )
+        self.buyer = User.objects.create_user(
+            username="buyer",
+            email="buyer@example.com",
+            password="test-pass-123",
+            role=User.Roles.BUYER,
+        )
+
+    def test_seller_can_create_property(self):
+        self.client.force_login(self.seller)
+        response = self.client.post(reverse("property_create"), {
+            "title": "Sample Property",
+            "description": "A great place to live.",
+            "location": "Nairobi",
+            "price": "1000000.00",
+            "address": "123 Main St",
+            "city": "Nairobi",
+            "state": "Nairobi",
+            "zip_code": "00100",
+            "property_type": "house",
+            "listing_type": "sale",
+            "bedrooms": "3",
+            "bathrooms": "2",
+            "square_feet": "1200",
+            "has_parking": "on",
+            "has_pool": "on",
+            "has_gym": "on",
+            "has_garden": "on",
+            "status": "available",
+            "is_featured": "on",
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Property.objects.filter(owner=self.seller, title="Sample Property").exists())
+
+    def test_buyer_cannot_access_property_create(self):
+        self.client.force_login(self.buyer)
+        response = self.client.get(reverse("property_create"))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("property_list"))

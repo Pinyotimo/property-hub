@@ -79,8 +79,15 @@ class Property(models.Model):
 
 
 class PropertyImage(models.Model):
+    MEDIA_TYPES = [
+        ('image', 'Image'),
+        ('video', 'Video'),
+    ]
+
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='property_images/')
+    media_type = models.CharField(max_length=10, choices=MEDIA_TYPES, default='image')
+    image = models.ImageField(upload_to='property_images/', blank=True, null=True)
+    video = models.FileField(upload_to='property_videos/', blank=True, null=True)
     is_primary = models.BooleanField(default=False)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
@@ -88,7 +95,7 @@ class PropertyImage(models.Model):
         ordering = ['-is_primary', 'uploaded_at']
 
     def __str__(self):
-        return f"Image for {self.property.title}"
+        return f"{self.get_media_type_display()} for {self.property.title}"
 
 
 class Message(models.Model):

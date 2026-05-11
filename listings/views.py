@@ -52,6 +52,7 @@ def latest_property_view(request):
 def property_create(request):
     """Create a new property owned by the logged-in user."""
     if not (request.user.is_seller or request.user.is_admin):
+        django_messages.warning(request, "You need a seller account to add a property.")
         return redirect("property_list")
 
     if request.method == "POST":
@@ -60,6 +61,7 @@ def property_create(request):
             property_obj = form.save(commit=False)
             property_obj.owner = request.user
             property_obj.save()
+            django_messages.success(request, "Property added successfully.")
             return redirect("property_list")
     else:
         form = PropertyForm()
