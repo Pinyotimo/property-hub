@@ -1,5 +1,7 @@
 asgiref==3.11.0
+channels==4.3.2
 crispy-bootstrap5==2025.6
+daphne==4.2.1
 Django==5.2.9
 django-crispy-forms==2.5
 django-widget-tweaks==1.5.0

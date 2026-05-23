@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import App from "./main.jsx"; // Import the component directly
 
 describe("Property Hub app", () => {
@@ -42,8 +42,22 @@ describe("Property Hub app", () => {
 
     // 3. Wait for the mocked API to resolve and update the UI
     await waitFor(() => {
-      expect(screen.getByText("No properties found")).toBeInTheDocument();
+      expect(screen.getByText("No listings found")).toBeInTheDocument();
     });
+  });
+
+  it("renders the sliding login view and can switch to register", async () => {
+    window.history.pushState({}, "", "/app/login");
+
+    render(<App />);
+
+    expect(await screen.findByText("Sign In")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /sign up/i })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /sign up/i }));
+
+    expect(window.location.pathname).toBe("/app/register");
+    expect(await screen.findByText("Create Account")).toBeInTheDocument();
   });
 });
 

@@ -44,6 +44,8 @@ CSRF_TRUSTED_ORIGINS = env_list(
 
 # Application definition
 INSTALLED_APPS = [
+    'daphne',
+
     # Django core apps
     'django.contrib.admin',
     'django.contrib.auth',
@@ -53,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Local apps
+    'channels',
     'profiles.apps.ProfilesConfig',
     'listings',
     'widget_tweaks',
@@ -94,6 +97,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'property_hub.wsgi.application'
+ASGI_APPLICATION = 'property_hub.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 # Database
 DATABASES = {

@@ -61,10 +61,10 @@ property-hub/
 
 2. Create and activate virtual environment:
    ```powershell
-   python -m venv env
-   .\env\Scripts\Activate.ps1  # Windows
+   python -m venv .venv
+   .\.venv\Scripts\Activate.ps1  # Windows
    # or
-   source env/bin/activate     # macOS/Linux
+   source .venv/bin/activate     # macOS/Linux
    ```
 
 3. Install Python dependencies:
@@ -105,9 +105,9 @@ property-hub/
 
 ### Running the Application
 
-1. Start the Django development server:
+1. Start the Django development server on port `8001`:
    ```bash
-   python manage.py runserver
+   python manage.py runserver 127.0.0.1:8001
    ```
 
 2. In another terminal, start the frontend development server:
@@ -116,7 +116,11 @@ property-hub/
    npm run dev
    ```
 
-3. Open your browser to `http://localhost:8000`
+3. Open your browser to either:
+   - `http://127.0.0.1:8001` for the Django backend
+   - `http://127.0.0.1:5173` for the React frontend
+
+> Note: Port `8000` is commonly used by other services like Splunk. If `8000` is in use, use `8001` for Django and the frontend proxy will route API requests correctly.
 
 ### Testing
 
@@ -130,6 +134,8 @@ Run frontend tests:
 cd frontend
 npm test
 ```
+
+> Verified with 7 Django tests and 1 Vitest frontend test.
 
 ### Code Quality
 

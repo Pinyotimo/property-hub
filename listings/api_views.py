@@ -248,11 +248,12 @@ def property_messages_view(request, pk):
     conversation_messages = property_obj.messages.select_related("sender", "receiver", "replied_by").order_by("timestamp")
 
     if request.method == "GET":
-        if not _can_view_property_messages(request.user, property_obj):
-            raise PermissionDenied("You can only view conversations you are part of.")
+        can_manage = _can_manage_property(request.user, property_obj)
+        if not can_manage:
+            conversation_messages = conversation_messages.filter(Q(sender=request.user) | Q(receiver=request.user))
         return JsonResponse({
             "messages": [_serialize_message(msg, request.user) for msg in conversation_messages],
-            "canManage": _can_manage_property(request.user, property_obj),
+            "canManage": can_manage,
         })
 
     body = _json_body(request).get("message", "").strip()
