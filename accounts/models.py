@@ -40,6 +40,10 @@ class User(AbstractUser):
         default=Roles.BUYER,
         help_text=_('Role of the user.')
     )
+    seller_approved = models.BooleanField(
+        default=False,
+        help_text=_('Designates whether this seller can publish listings.')
+    )
 
     # Use email as the primary login field
     USERNAME_FIELD = 'email'
@@ -61,3 +65,7 @@ class User(AbstractUser):
     @property
     def is_admin(self):
         return self.role == self.Roles.ADMIN or self.is_superuser
+
+    @property
+    def can_post_listings(self):
+        return self.is_admin or (self.is_seller and self.seller_approved)

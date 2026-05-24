@@ -74,6 +74,14 @@ class PropertyCreateTests(TestCase):
             email="seller@example.com",
             password="test-pass-123",
             role=User.Roles.SELLER,
+            seller_approved=True,
+        )
+        self.pending_seller = User.objects.create_user(
+            username="pending",
+            email="pending@example.com",
+            password="test-pass-123",
+            role=User.Roles.SELLER,
+            seller_approved=False,
         )
         self.buyer = User.objects.create_user(
             username="buyer",
@@ -111,6 +119,12 @@ class PropertyCreateTests(TestCase):
 
     def test_buyer_cannot_access_property_create(self):
         self.client.force_login(self.buyer)
+        response = self.client.get(reverse("property_create"))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("property_list"))
+
+    def test_pending_seller_cannot_access_property_create(self):
+        self.client.force_login(self.pending_seller)
         response = self.client.get(reverse("property_create"))
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("property_list"))

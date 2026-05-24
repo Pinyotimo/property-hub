@@ -39,7 +39,10 @@ def property_detail(request, pk):
 @login_required
 def latest_property_view(request):
     """Redirect to the most recent property owned by the logged-in user."""
-    if not (request.user.is_seller or request.user.is_admin):
+    if not request.user.can_post_listings:
+        if request.user.is_seller:
+            django_messages.warning(request, "Your seller account is waiting for admin approval.")
+            return redirect("property_list")
         return redirect("property_list")
 
     latest = Property.objects.filter(owner=request.user).first()
@@ -51,8 +54,11 @@ def latest_property_view(request):
 @login_required
 def property_create(request):
     """Create a new property owned by the logged-in user."""
-    if not (request.user.is_seller or request.user.is_admin):
-        django_messages.warning(request, "You need a seller account to add a property.")
+    if not request.user.can_post_listings:
+        if request.user.is_seller:
+            django_messages.warning(request, "Your seller account is waiting for admin approval.")
+        else:
+            django_messages.warning(request, "You need an approved seller account to add a property.")
         return redirect("property_list")
 
     if request.method == "POST":

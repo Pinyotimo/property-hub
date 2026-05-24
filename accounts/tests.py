@@ -32,3 +32,45 @@ class AccountApiTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIsNone(response.json()["user"])
         self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_admin_can_approve_seller(self):
+        User = get_user_model()
+        admin = User.objects.create_user(
+            username="admin",
+            email="admin@example.com",
+            password="test-pass-123",
+            role=User.Roles.ADMIN,
+        )
+        seller = User.objects.create_user(
+            username="seller",
+            email="seller@example.com",
+            password="test-pass-123",
+            role=User.Roles.SELLER,
+            seller_approved=False,
+        )
+        self.client.force_login(admin)
+
+        response = self.client.post(
+            f"/api/accounts/sellers/{seller.id}/approval/",
+            {"approved": True},
+            content_type="application/json",
+        )
+
+        seller.refresh_from_db()
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(seller.seller_approved)
+        self.assertTrue(response.json()["seller"]["isSellerApproved"])
+
+    def test_non_admin_cannot_list_sellers(self):
+        User = get_user_model()
+        buyer = User.objects.create_user(
+            username="buyer",
+            email="buyer@example.com",
+            password="test-pass-123",
+            role=User.Roles.BUYER,
+        )
+        self.client.force_login(buyer)
+
+        response = self.client.get("/api/accounts/sellers/")
+
+        self.assertEqual(response.status_code, 403)

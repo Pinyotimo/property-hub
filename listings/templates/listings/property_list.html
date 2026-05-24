@@ -10,7 +10,7 @@
     <p class="text-muted mb-0">Compare current homes, rentals, land, and commercial spaces.</p>
   </div>
   {% if request.user.is_authenticated %}
-    {% if request.user.is_seller or request.user.is_admin %}
+    {% if request.user.can_post_listings %}
       <a href="{% url 'property_create' %}" class="btn btn-primary">Add Property</a>
     {% endif %}
   {% endif %}

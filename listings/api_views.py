@@ -175,8 +175,8 @@ def property_list_view(request):
     if request.method == "POST":
         if not request.user.is_authenticated:
             return JsonResponse({"error": "Login required."}, status=401)
-        if not (request.user.is_seller or request.user.is_admin):
-            raise PermissionDenied("Only sellers and admins can create listings.")
+        if not request.user.can_post_listings:
+            raise PermissionDenied("Only approved sellers and admins can create listings.")
 
         form = PropertyForm(_form_data_from_payload(_payload_from_request(request)), request.FILES or None)
         if not form.is_valid():

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>React in the Browser</title>
+    <!-- 1. Load React and React-DOM libraries -->
+    <script src="https://unpkg.com" crossorigin></script>
+    <script src="https://unpkg.com" crossorigin></script>
+    <!-- 2. Load Babel compiler to read JSX code -->
+    <script src="https://unpkg.com"></script>
+</head>
+<body>
+
+    <!-- 3. The target HTML container for React -->
+    <div id="root"></div>
+
+    <!-- 4. Your React code (Note the type="text/babel") -->
+    <script type="text/babel">
+        function MyComponent() {
+            return <h1>Hello, React is running in the browser!</h1>;
+        }
+
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(<MyComponent />);
+    </script>
+
+</body>
+</html>

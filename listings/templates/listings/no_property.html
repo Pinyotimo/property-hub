@@ -10,7 +10,7 @@
       There are currently no properties listed. Please check back soon.
     </p>
 
-    {% if user.is_authenticated and user.is_seller %}
+    {% if user.is_authenticated and user.can_post_listings %}
       <a href="{% url 'property_create' %}" class="btn btn-primary">
         Add Your First Property
       </a>

@@ -4,9 +4,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_http_methods, require_POST
 
 from .forms import UserRegistrationForm
+from .models import User
 
 
 def _json_body(request):
@@ -33,9 +34,23 @@ def _serialize_user(user):
         "role": user.role,
         "isBuyer": user.is_buyer,
         "isSeller": user.is_seller,
+        "isSellerApproved": user.seller_approved,
+        "canPostListings": user.can_post_listings,
         "isAdmin": user.is_admin,
         "isStaff": user.is_staff,
         "isSuperuser": user.is_superuser,
+    }
+
+
+def _serialize_seller(user):
+    return {
+        "id": user.id,
+        "username": user.username,
+        "fullName": user.get_full_name() or user.username,
+        "email": user.email,
+        "phone": user.phone,
+        "isSellerApproved": user.seller_approved,
+        "dateJoined": user.date_joined.isoformat(),
     }
 
 
@@ -86,3 +101,31 @@ def register_view(request):
     user = form.save()
     login(request, user)
     return JsonResponse({"user": _serialize_user(user)}, status=201)
+
+
+@require_http_methods(["GET"])
+def sellers_view(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Login required."}, status=401)
+    if not request.user.is_admin:
+        return JsonResponse({"error": "Admin access required."}, status=403)
+
+    sellers = User.objects.filter(role=User.Roles.SELLER).order_by("seller_approved", "-date_joined")
+    return JsonResponse({"sellers": [_serialize_seller(seller) for seller in sellers]})
+
+
+@require_POST
+def seller_approval_view(request, user_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Login required."}, status=401)
+    if not request.user.is_admin:
+        return JsonResponse({"error": "Admin access required."}, status=403)
+
+    try:
+        seller = User.objects.get(pk=user_id, role=User.Roles.SELLER)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "Seller not found."}, status=404)
+    data = _json_body(request)
+    seller.seller_approved = bool(data.get("approved", True))
+    seller.save(update_fields=["seller_approved"])
+    return JsonResponse({"seller": _serialize_seller(seller)})
