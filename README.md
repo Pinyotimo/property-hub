@@ -1,215 +1,196 @@
 # Property Hub
 
-Property Hub is a full-stack web application for browsing and managing real estate listings. It features a Django backend for robust data management and authentication, paired with a modern React frontend built with Vite for a responsive user experience.
+Property Hub is a full-stack real estate marketplace that combines a Django backend with a React + Vite frontend. It supports property browsing, seller CRUD actions, admin approvals, and a messaging flow for listings.
 
-## Features
+## Highlights
 
-- **Property Listings**: Browse houses, apartments, land, commercial spaces, and rentals
-- **Advanced Filtering**: Filter by property type, listing type (sale/rent), status, and search by title, location, or description
-- **User Authentication**: Secure login and registration system
-- **Seller Dashboard**: Add, edit, and manage property listings
-- **Messaging System**: Contact property owners or view messages for your listings
-- **Admin Panel**: Full Django admin interface for system management
-- **Responsive Design**: Mobile-friendly interface with modern UI
+- Browse listings with search and category filters
+- Create, edit, and delete listings from the seller experience
+- View and manage messages associated with properties
+- Use the Django admin panel for approvals and management
+- Run the app locally with a shared Vite proxy for `/api`, `/media`, `/static`, `/admin`, and `/ws`
 
 ## Tech Stack
 
-- **Backend**: Django 5.2, Python 3.x
-- **Frontend**: React 18, Vite, JSX
-- **Database**: SQLite (development), PostgreSQL (production recommended)
-- **Styling**: Custom CSS with modern design system
-- **Authentication**: Django's built-in auth system
-- **API**: Custom REST API endpoints
+- **Backend:** Django 5.2.9, Django Channels, Python 3.14
+- **Frontend:** React 19, Vite 7, Vitest
+- **Database:** SQLite for development
+- **Styling:** Custom CSS
+- **Authentication:** Django auth with a custom user model
 
 ## Project Structure
 
-```
+```text
 property-hub/
-├── property_hub/          # Django project settings
-├── accounts/              # User authentication app
-├── listings/              # Property listings app
-├── profiles/              # User profiles app
-├── payments/              # Payment processing (future)
-├── billing/               # Billing management (future)
-├── pages/                 # Static pages
-├── frontend/              # React application
-│   ├── src/
-│   │   ├── main.jsx       # Main React app
-│   │   └── styles.css     # Global styles
-│   └── package.json
-├── static/                # Static files
+├── accounts/              # Authentication and user account logic
+├── listings/              # Listings, messages, and WebSocket routing
+├── pages/                 # Static pages and view helpers
+├── payments/              # Payment-related app
+├── profiles/              # Profile models and views
+├── properties/            # Property models and related logic
+├── property_hub/          # Django settings, URLs, ASGI/WSGI entrypoints
+├── frontend/              # React + Vite frontend
+│   ├── src/               # React app source
+│   ├── package.json       # Frontend scripts and dependencies
+│   └── vite.config.js    # Dev server proxy and build output
 ├── templates/             # Django templates
-├── media/                 # User-uploaded files
-└── scripts/               # Utility scripts
+├── static/                # Static assets for Django
+├── media/                 # Uploaded images and user files
+├── scripts/               # Utility scripts and local checks
+└── db.sqlite3             # Local development database
 ```
 
-## Setup
-
-### Prerequisites
+## Prerequisites
 
 - Python 3.8+
-- Node.js 16+
+- Node.js 18+
 - Git
 
-### Backend Setup
+## Local Setup
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd property-hub
-   ```
+### 1. Clone the repository
 
-2. Create and activate virtual environment:
-   ```powershell
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1  # Windows
-   # or
-   source .venv/bin/activate     # macOS/Linux
-   ```
-
-3. Install Python dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Run database migrations:
-   ```bash
-   python manage.py migrate
-   ```
-
-5. Create a superuser (optional, for admin access):
-   ```bash
-   python manage.py createsuperuser
-   ```
-
-### Frontend Setup
-
-1. Navigate to frontend directory:
-   ```bash
-   cd frontend
-   ```
-
-2. Install Node.js dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Build the frontend (for production) or start development server:
-   ```bash
-   npm run build  # Build for production
-   # or
-   npm run dev    # Development server
-   ```
-
-## Development
-
-### Running the Application
-
-1. Start the Django development server on port `8001`:
-   ```bash
-   python manage.py runserver 127.0.0.1:8001
-   ```
-
-2. In another terminal, start the frontend development server:
-   ```bash
-   cd frontend
-   npm run dev
-   ```
-
-3. Open your browser to either:
-   - `http://127.0.0.1:8001` for the Django backend
-   - `http://127.0.0.1:5173` for the React frontend
-
-> Note: Port `8000` is commonly used by other services like Splunk. If `8000` is in use, use `8001` for Django and the frontend proxy will route API requests correctly.
-
-### Testing
-
-Run backend tests:
 ```bash
-python manage.py test
+git clone <repository-url>
+cd property-hub
 ```
 
-Run frontend tests:
+### 2. Create and activate a virtual environment
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+For macOS/Linux:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+cd frontend
+npm install
+cd ..
+```
+
+### 4. Apply database migrations
+
+```bash
+python manage.py migrate
+```
+
+### 5. Create an optional superuser
+
+```bash
+python manage.py createsuperuser
+```
+
+## Run the app locally
+
+### Backend
+
+Start the Django development server on port `8001`:
+
+```bash
+python manage.py runserver 127.0.0.1:8001
+```
+
+### Frontend
+
+In a second terminal, start the Vite development server:
+
+```bash
+cd frontend
+npm run dev
+```
+
+### Open the app
+
+- Django UI and API: `http://127.0.0.1:8001`
+- React frontend: `http://127.0.0.1:5173`
+
+> The frontend dev server proxies `/api`, `/media`, `/static`, `/admin`, and `/ws` to `http://127.0.0.1:8001`, so the React app can talk to Django directly during development.
+
+> If port `8000` is already occupied, keep using `8001` for Django. The frontend proxy is already configured for that port.
+
+## Environment variables
+
+The current Django settings read the following environment variables:
+
+```bash
+DJANGO_DEBUG=True
+DJANGO_SECRET_KEY=<long-random-secret-key>
+DJANGO_ALLOWED_HOSTS=<comma-separated-hostnames>
+DJANGO_CSRF_TRUSTED_ORIGINS=http://127.0.0.1:5173,http://localhost:5173
+```
+
+For local development, the defaults are already suitable. For production, set `DJANGO_DEBUG=False` and provide real values for `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS`, and `DJANGO_CSRF_TRUSTED_ORIGINS`.
+
+## Testing
+
+Run the backend tests:
+
+```bash
+.\.venv\Scripts\python manage.py test
+```
+
+Run the frontend tests:
+
 ```bash
 cd frontend
 npm test
 ```
 
-> Verified with 7 Django tests and 1 Vitest frontend test.
+### Verified test results
 
-### Code Quality
+- **Django:** `10` tests passed
+- **Frontend:** `1` test file passed, `9` tests passed
 
-- Use Django's built-in testing framework for backend tests
-- Use Jest for frontend component testing
-- Follow PEP 8 for Python code style
-- Use ESLint for JavaScript/React code quality
+## Production build
 
-## Deployment
-
-### Production Settings
-
-Set these environment variables before deploying:
+Build the frontend for production:
 
 ```bash
-DJANGO_DEBUG=False
-DJANGO_SECRET_KEY=<long-random-secret-key>
-DJANGO_ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
-DJANGO_CSRF_TRUSTED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+cd frontend
+npm run build
 ```
 
-With `DJANGO_DEBUG=False`, the application automatically:
-- Enables HTTPS redirects
-- Sets secure cookies
-- Enables HSTS headers
+Collect Django static files for deployment:
 
-### Static Files
-
-For production, collect static files:
 ```bash
 python manage.py collectstatic
 ```
 
-### Database
+## API overview
 
-Use PostgreSQL in production. Update `DATABASES` in `settings.py`:
-```python
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'property_hub',
-        'USER': 'your_user',
-        'PASSWORD': 'your_password',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-```
+The app exposes a custom API for listing management and messaging:
 
-## API Documentation
-
-The application provides REST API endpoints:
-
-- `GET /api/listings/properties/` - List properties with filtering
-- `POST /api/listings/properties/` - Create new property (sellers only)
-- `GET /api/listings/properties/{id}/` - Get property details
-- `PUT /api/listings/properties/{id}/` - Update property (owner only)
-- `DELETE /api/listings/properties/{id}/` - Delete property (owner only)
-- `GET /api/listings/properties/{id}/messages/` - Get property messages
-- `POST /api/listings/properties/{id}/messages/` - Send message about property
+- `GET /api/listings/properties/` - List properties
+- `POST /api/listings/properties/` - Create a property (seller only)
+- `GET /api/listings/properties/{id}/` - Retrieve a property
+- `PUT /api/listings/properties/{id}/` - Update a property
+- `DELETE /api/listings/properties/{id}/` - Delete a property
+- `GET /api/listings/properties/{id}/messages/` - View property messages
+- `POST /api/listings/properties/{id}/messages/` - Send a message about a property
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests for new functionality
-5. Ensure all tests pass
-6. Submit a pull request
+4. Add or update tests when you change behavior
+5. Run the backend and frontend test suites
+6. Open a pull request
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License.
 
 ## Support
 
-For questions or issues, please open an issue on GitHub or contact the development team.
+If you need help, open an issue or reach out to the project maintainers.
