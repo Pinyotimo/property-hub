@@ -270,6 +270,7 @@ export default function App() {
   };
 
   const requestJson = async (path, payload) => {
+    const liveCsrfToken = getCookie('csrftoken') || csrfToken || '';
     let response;
     try {
       response = await fetch(path, {
@@ -277,7 +278,7 @@ export default function App() {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken || getCookie('csrftoken') || ''
+          'X-CSRFToken': liveCsrfToken
         },
         body: JSON.stringify(payload)
       });
@@ -546,6 +547,10 @@ export default function App() {
                       <button>Nairobi (Metropolitan)</button>
                       <button>Mombasa Coastline</button>
                       <button>Rift Valley Region</button>
+                      <button>Nyanza Region</button>
+                      <button>Central Region</button>
+                      <button>Western Region</button>
+                      <button>Eastern Region</button>
                     </div>
                   )}
                 </div>

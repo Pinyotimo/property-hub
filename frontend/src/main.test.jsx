@@ -250,6 +250,35 @@ describe("Property Hub app", () => {
     });
   });
 
+  it("uses the live csrf cookie token for seller approval requests", async () => {
+    document.cookie = "csrftoken=live-cookie-token";
+    const fetchMock = vi.mocked(global.fetch);
+
+    render(<App />);
+
+    await loginAs("admin@example.com", "Admin User");
+    fireEvent.click(screen.getByRole("button", { name: /dashboard/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Pending Seller")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /approve/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Approved")).toBeInTheDocument();
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/accounts/sellers/5/approval/",
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          "X-CSRFToken": "live-cookie-token",
+        }),
+      })
+    );
+  });
+
   it("switches category tabs and opens listing details", async () => {
     render(<App />);
 
